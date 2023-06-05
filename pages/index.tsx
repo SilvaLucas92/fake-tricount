@@ -2,11 +2,9 @@ import AnimateComponent from "@/components/AnimateComponent/AnimateComponent";
 import Counts from "@/components/Counts/Counts";
 import Hero from "@/components/Hero/Hero";
 import Navbar from "@/components/Navbar/Navbar";
-import { SingleCount } from "@/components/SingleCount/SingleCount";
 import { Inter } from "next/font/google";
-import { useState } from "react";
 import clsx from "clsx";
-import { CustomSelect } from "@/components/Select";
+import { Layout } from "@/components/Layout/Layout";
 const inter = Inter({ subsets: ["latin"] });
 
 interface DataTypes {
@@ -42,31 +40,20 @@ const data: DataTypes[] = [
 ];
 
 export default function Home() {
-  const options = data?.map((item: any) => {
-    return {
-      value: item.title,
-      label: item.title,
-    };
-  });
-  console.log(options);
   return (
-    <div className="w-3/4 mx-auto">
-      <AnimateComponent>
-        <Navbar />
-        <main>
-          <Hero />
-          <hr />
-          {!data && <h2 className="p-10 text-5xl font-semibold">No Counts!</h2>}
-          {data && (
-            <div className={clsx("flex", "gap-20", "mt-10")}>
-              <div className="w-2/4">
-                <CustomSelect data={options} placeholder={"Select..."} />
-              </div>
-              <SingleCount />
-            </div>
-          )}
-        </main>
-      </AnimateComponent>
-    </div>
+    <Layout>
+      <main>
+        <Hero />
+        <hr />
+        {!data && <h2 className="p-10 text-5xl font-semibold">No Counts!</h2>}
+        {data && (
+          <div className={clsx("flex", "flex-col", "gap-5", "mt-10")}>
+            {data.map((item) => (
+              <Counts data={item as DataTypes} key={item.title} />
+            ))}
+          </div>
+        )}
+      </main>
+    </Layout>
   );
 }
