@@ -5,6 +5,8 @@ import Navbar from "@/components/Navbar/Navbar";
 import { Inter } from "next/font/google";
 import clsx from "clsx";
 import { Layout } from "@/components/Layout/Layout";
+import { Input } from "@/components/Input";
+import { useState } from "react";
 const inter = Inter({ subsets: ["latin"] });
 
 interface DataTypes {
@@ -40,6 +42,7 @@ const data: DataTypes[] = [
 ];
 
 export default function Home() {
+  const [errors, setErrors] = useState("");
   return (
     <Layout>
       <main>

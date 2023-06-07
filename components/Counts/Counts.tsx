@@ -1,7 +1,9 @@
 import clsx from "clsx";
+import { useRouter } from "next/router";
 import { CustomSelect } from "../Select";
 
 const Counts = ({ data }: any) => {
+  const { push } = useRouter();
   return (
     <div
       className={clsx(
@@ -13,8 +15,10 @@ const Counts = ({ data }: any) => {
         "justify-between",
         "items-center",
         "py-5",
-        "px-10"
+        "px-5",
+        "cursor-pointer"
       )}
+      onClick={() => push(`/CountsDetails/${data.id}`)}
     >
       <div className="flex-col">
         <h5 className="font-semibold">{data.title}</h5>

@@ -7,15 +7,7 @@ const Navbar = () => {
   const [open, setOpen] = useState<boolean>(false);
 
   return (
-    <header
-      className={clsx(
-        "flex",
-        "justify-between",
-        "items-center",
-        "px-10",
-        "py-5"
-      )}
-    >
+    <header className={clsx("flex", "justify-between", "items-center", "py-5")}>
       <Link
         href="/"
         className={clsx("block", "font-bold", "text-gray-900", "text-lg")}

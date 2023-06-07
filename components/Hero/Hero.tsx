@@ -2,7 +2,7 @@ import clsx from "clsx";
 
 const Hero = () => {
   return (
-    <section className={clsx("px-10", "text-left")}>
+    <section className={clsx("text-left")}>
       <h3 className={clsx("text-5xl", "font-bold", "text-gray-900", "mt-10")}>
         Join fake tricount!
       </h3>
