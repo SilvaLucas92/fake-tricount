@@ -1,6 +1,5 @@
 import clsx from "clsx";
 import { useRouter } from "next/router";
-import { CustomSelect } from "../Select";
 
 const Counts = ({ data }: any) => {
   const { push } = useRouter();
