@@ -4,7 +4,7 @@ import { Layout } from "@/components/Layout/Layout";
 
 const CountsDetails = () => {
   const { query } = useRouter();
-  console.log(query);
+
   return (
     <Layout>
       <div

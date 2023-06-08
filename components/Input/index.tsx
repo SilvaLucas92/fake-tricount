@@ -6,13 +6,21 @@ export const Input = ({
   error,
   label,
   disabled,
+  value,
+  onChange,
+  onBlur,
+  type,
 }: {
   name: string;
   error?: string;
   label?: string;
   disabled?: boolean;
+  value?: string;
+  onChange?: any;
+  onBlur?: boolean;
+
+  type: string;
 }) => {
-  console.log(Boolean(error));
   return (
     <div className="my-5 py-5">
       <label
@@ -22,6 +30,9 @@ export const Input = ({
         {label}
       </label>
       <input
+        type={type}
+        onChange={onChange}
+        value={value}
         name={name}
         className={clsx(
           "w-full",
