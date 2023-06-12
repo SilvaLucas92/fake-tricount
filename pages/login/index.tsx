@@ -3,28 +3,41 @@ import * as Yup from "yup";
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { signIn } from "next-auth/react";
+import { RouteMatcher } from "next/dist/server/future/route-matchers/route-matcher";
+import { useRouter } from "next/router";
+
+const initialValues: { password: string; email: string } = {
+  password: "",
+  email: "",
+};
+
+const validationSchema = Yup.object({
+  password: Yup.string().required("Password is required"),
+  email: Yup.string()
+    .email("Invalid email address")
+    .required("Email is required"),
+});
 
 const Login = () => {
-  const initialValues: { password: string; email: string; name?: string } = {
-    password: "",
-    email: "",
-    // name: "",
-  };
+  const router = useRouter();
 
-  const validationSchema = Yup.object({
-    password: Yup.string().required("Password is required"),
-    email: Yup.string()
-      .email("Invalid email address")
-      .required("Email is required"),
-    // name: Yup.string().required("Name is required"),
-  });
-
-  const onSubmit = (values: {
+  const onSubmit = async (values: {
     password: string;
     email: string;
     name?: string;
   }) => {
-    console.log(values);
+    if (values) {
+      const loginRes = await signIn("credentials", {
+        email: values.email,
+        password: values.password,
+      });
+      if (loginRes && !loginRes.ok) {
+        console.log("errr");
+      } else {
+        router.push("/");
+      }
+    }
+    return;
   };
 
   const formik = useFormik({
@@ -36,16 +49,6 @@ const Login = () => {
   return (
     <form onSubmit={formik.handleSubmit}>
       <div className="w-2/4 mx-auto">
-        {/* <Input
-          type="text"
-          name="name"
-          label="Name"
-          value={formik.values.name}
-          onChange={formik.handleChange}
-          error={
-            formik.touched.name && formik.errors.name ? formik.errors.name : ""
-          }
-        /> */}
         <Input
           type="text"
           name="email"

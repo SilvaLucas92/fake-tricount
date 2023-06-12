@@ -25,7 +25,7 @@ const Register = () => {
     name?: string;
   }) => {
     const data = await axios
-      .post("/api/register", { user: values })
+      .post("/api/auth/register", { user: values })
       .then((res) => console.log(res))
       .catch((er) => console.log(er));
     return data;
