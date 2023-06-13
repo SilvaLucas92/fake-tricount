@@ -8,10 +8,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return;
   }
   try {
-    const email = req.query.email;
+    const { id } = req.query;
     await connectMongoDB();
-    const counts = await Counts.find({ created_by: email });
-    res.status(200).send(counts);
+    const count = await Counts.findById(id);
+    if (!count) {
+      res.status(404).json({ error: "Count not found" });
+      return;
+    }
+    res.status(200).json(count);
   } catch (err) {
     res.status(400).json({ err, msg: "Something went wrong" });
   }

@@ -8,7 +8,7 @@ const Counts = ({ data }: any) => {
       className={clsx(
         "w-full",
         "border",
-        "border-gray-100",
+        "border-gray-300",
         "rounded-md",
         "flex",
         "justify-between",
@@ -16,6 +16,7 @@ const Counts = ({ data }: any) => {
         "py-5",
         "px-5",
         "cursor-pointer"
+        , "bg-white"
       )}
       onClick={() => push(`/CountsDetails/${data._id}`)}
     >

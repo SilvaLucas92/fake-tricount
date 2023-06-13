@@ -4,6 +4,8 @@ import AddForm from "./AddForm";
 import clsx from "clsx";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import { Button } from "../Button";
+import { signOut } from "next-auth/react";
 
 const Navbar = () => {
   const [open, setOpen] = useState<boolean>(false);
@@ -30,21 +32,9 @@ const Navbar = () => {
       >
         Fake tricount
       </Link>
-      <button
-        onClick={() => setOpen(true)}
-        className={clsx(
-          "rounded-md",
-          "px-3.5",
-          "py-2.5",
-          "bg-indigo-600",
-          "shadow-sm",
-          "hover:bg-indigo-200",
-          "block",
-          "font-semibold",
-          "text-white"
-        )}
-      >
-        Add
+      <button type="submit" onClick={() => signOut()}>
+        {" "}
+        Sign out{" "}
       </button>
       <AddForm
         open={open}

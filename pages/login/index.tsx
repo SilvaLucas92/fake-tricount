@@ -27,11 +27,12 @@ const Login = () => {
   }) => {
     try {
       const loginRes = await signIn("credentials", {
+        redirect: false,
         email: values.email,
         password: values.password,
       });
       if (loginRes && !loginRes.ok) {
-        console.log("errr");
+        console.log(loginRes.error || "asas");
       } else {
         router.push("/");
       }
@@ -48,7 +49,7 @@ const Login = () => {
 
   return (
     <form onSubmit={formik.handleSubmit}>
-      <section className="h-screen  flex justify-center items-center bg-gray-50">
+      <section className="h-screen flex justify-center items-center bg-gray-50">
         {" "}
         <div className="w-full p-10 md:w-2/4 mx-auto flex flex-col  gap-5 bg-white rounded-lg shadow">
           <h2 className="text-2xl	">Welcome Back, Sign in to your account!</h2>

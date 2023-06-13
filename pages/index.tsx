@@ -1,12 +1,17 @@
-import AnimateComponent from "@/components/AnimateComponent/AnimateComponent";
 import Counts from "@/components/Counts/Counts";
 import Hero from "@/components/Hero/Hero";
-import Navbar from "@/components/Navbar/Navbar";
 import { Inter } from "next/font/google";
 import clsx from "clsx";
 import { Layout } from "@/components/Layout/Layout";
-import { Input } from "@/components/Input";
 import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { useSession, getSession } from "next-auth/react";
+import axios from "axios";
+import { ShowNotification } from "@/components/ShowNotification";
+import { GetServerSidePropsContext } from "next";
+import { AddButton } from "@/components/AddButton";
+import AddForm from "@/components/Navbar/AddForm";
+
 const inter = Inter({ subsets: ["latin"] });
 
 interface DataTypes {
@@ -17,36 +22,18 @@ interface DataTypes {
   id: number;
 }
 
-const datas: DataTypes[] = [
-  {
-    title: "Marzo",
-    description: "gastos hogar",
-    created_by: "Lucas Silva",
-    participants: ["Lucas Silva", "Candela Palomba"],
-    id: 1,
-  },
-  {
-    title: "Abril",
-    description: "facturas",
-    created_by: "Ana Perez",
-    participants: ["Lucas Silva", "Candela Palomba"],
-    id: 2,
-  },
-  {
-    title: "Mayo",
-    description: "compras",
-    created_by: "Juan Gomez",
-    participants: ["Lucas Silva", "Candela Palomba"],
-    id: 3,
-  },
-];
-
-import { useSession } from "next-auth/react";
-import axios from "axios";
+interface Alert {
+  type: string;
+  msg: string;
+}
 
 export default function Home() {
   const session = useSession();
+  const [shouldFetch, setShouldFetch] = useState(true);
   const [data, setData] = useState([]);
+  const [alert, setAlert] = useState<Alert | null>(null);
+  const { push } = useRouter();
+  const [open, setOpen] = useState<boolean>(false);
 
   const apiCall = useCallback(async () => {
     const email = session?.data?.user?.email;
@@ -54,30 +41,94 @@ export default function Home() {
       const response = await axios.get(`/api/counts/getCounts?email=${email}`);
       setData(response.data);
     } catch (err) {
-      console.log(err);
+      setAlert({
+        type: "error",
+        msg: `something went wrong, Please try again later.`,
+      });
     }
   }, [session?.data?.user?.email]);
 
   useEffect(() => {
-    apiCall();
-  }, [apiCall, data]);
+    if (shouldFetch) {
+      apiCall();
+      setShouldFetch(false);
+    }
+  }, [data, shouldFetch]);
 
-  console.log(data);
+  const onSubmit = async (values: any) => {
+    try {
+      const response = await axios.post("/api/counts/addCounts", {
+        counts: { ...values, created_by: session.data?.user?.email },
+      });
+      if (response?.data) {
+        setShouldFetch(true);
+        return response.data;
+      }
+    } catch (error) {
+      setAlert({
+        type: "error",
+        msg: `something went wrong, Please try again later.`,
+      });
+    }
+  };
 
   return (
     <Layout>
       <main>
         <Hero />
+        {alert && (
+          <ShowNotification
+            type={alert?.type}
+            msg={alert?.msg}
+            setAlert={setAlert}
+          />
+        )}
         <hr />
-        {!data && <h2 className="p-10 text-5xl font-semibold">No Counts!</h2>}
-        {data && (
+        {data && data?.length === 0 && (
+          <div className="flex justify-between items-center">
+            <h2 className="py-10 text-xl font-semibold">
+              You don t have counts to show
+            </h2>
+            <AddButton onClick={() => setOpen(true)} />
+          </div>
+        )}
+        {data.length > 0 && (
           <div className={clsx("flex", "flex-col", "gap-5", "mt-10")}>
-            {data?.map((item) => (
-              <Counts data={item as DataTypes} key={item?.title} />
+            <div className="flex justify-between items-center">
+              <h4>Counts</h4>
+              <AddButton onClick={() => setOpen(true)} />
+            </div>
+            {data?.map((item, index) => (
+              <Counts data={item as DataTypes} key={index} />
             ))}
           </div>
         )}
+        <AddForm
+          open={open}
+          onOpenChange={setOpen}
+          onSubmit={onSubmit}
+          formType="count"
+        />{" "}
       </main>
     </Layout>
   );
 }
+
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const session = await getSession(context);
+
+  if (!session)
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  return {
+    props: {
+      session,
+    },
+  };
+};

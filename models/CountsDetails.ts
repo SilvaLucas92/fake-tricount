@@ -18,6 +18,11 @@ const countsDetailsSchema = new Schema({
     type: String,
     required: true,
   },
+  countID: {
+    type: String,
+    required: true,
+    unique: true,
+  },
 });
 
 const CountsDetails =

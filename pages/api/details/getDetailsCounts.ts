@@ -8,12 +8,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return;
   }
   try {
+    const { id } = req.query;
     await connectMongoDB();
-    const countsDetails = await CountsDetails.find();
-    res.status(200).send(countsDetails);
+    const countsDetails = await CountsDetails.find({ countID: id });
+    res.status(200).json(countsDetails);
   } catch (err) {
     console.log(err);
-    res.status(400).json({ err, msg: "Something went wrong222" });
+    res.status(400).json({ err, msg: "Something went wrong" });
   }
 };
 

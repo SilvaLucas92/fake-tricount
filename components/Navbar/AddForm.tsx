@@ -6,11 +6,17 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 import axios from "axios";
 import { useRouter } from "next/router";
+import Select from "../Select";
 
-const AddForm = ({ open, onOpenChange, onSubmit, formType }: any) => {
+const AddForm = ({
+  open,
+  onOpenChange,
+  onSubmit,
+  formType,
+  participants,
+}: any) => {
   const router = useRouter();
 
-  // Define los valores iniciales y el esquema de validación según el tipo de formulario
   const initialValues =
     formType === "count"
       ? { title: "", description: "", participant: "" }
@@ -26,7 +32,6 @@ const AddForm = ({ open, onOpenChange, onSubmit, formType }: any) => {
       : Yup.object({
           title: Yup.string().required("Title is required"),
           amount: Yup.number().required("Amount is required"),
-          created_at: Yup.date(),
           paid_by: Yup.string().required("Paid by is required"),
         });
 
@@ -35,10 +40,10 @@ const AddForm = ({ open, onOpenChange, onSubmit, formType }: any) => {
     validationSchema: validationSchema,
     onSubmit: (values) => {
       onSubmit(values);
+      onOpenChange(false);
       formik.resetForm();
     },
   });
-
   return (
     <Modal open={open} onOpenChange={onOpenChange}>
       <Modal.Portal>
@@ -103,29 +108,11 @@ const AddForm = ({ open, onOpenChange, onSubmit, formType }: any) => {
                         : ""
                     }
                   />
-                  <Input
-                    type="date"
-                    label="Created At"
-                    name="created_at"
-                    value={formik.values.created_at}
-                    onChange={formik.handleChange}
-                    error={
-                      formik.touched.created_at && formik.errors.created_at
-                        ? formik.errors.created_at
-                        : ""
-                    }
-                  />
-                  <Input
-                    type="text"
-                    label="Paid By"
+                  <Select
+                    label="Paid by"
+                    data={participants}
+                    onChange={(value) => formik.setFieldValue("paid_by", value)}
                     name="paid_by"
-                    value={formik.values.paid_by}
-                    onChange={formik.handleChange}
-                    error={
-                      formik.touched.paid_by && formik.errors.paid_by
-                        ? formik.errors.paid_by
-                        : ""
-                    }
                   />
                 </>
               )}
