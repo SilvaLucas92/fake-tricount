@@ -17,7 +17,7 @@ const Counts = ({ data }: any) => {
         "px-5",
         "cursor-pointer"
       )}
-      onClick={() => push(`/CountsDetails/${data.id}`)}
+      onClick={() => push(`/CountsDetails/${data._id}`)}
     >
       <div className="flex-col">
         <h5 className="font-semibold">{data.title}</h5>

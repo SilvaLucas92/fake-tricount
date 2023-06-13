@@ -22,7 +22,7 @@ export const Input = ({
   type: string;
 }) => {
   return (
-    <div className="my-5 py-5">
+    <div>
       <label
         htmlFor={name}
         className={clsx("mb-2", "block", "text-sm", "font-medium")}
@@ -36,18 +36,19 @@ export const Input = ({
         name={name}
         className={clsx(
           "w-full",
-          "bg-white",
+          "bg-gray-100",
+          "outline-none",
           "border",
-          // "border-black",
           "py-2.5",
           "rounded-md",
           "px-1",
-          // "focus:ring-2",
-          // "focus:ring-inset",
-          // "focus:ring-gray-300",
-          // "ring-1",
-          // "ring-inset",
-          // "ring-gray-300",
+          "placeholder-gray-600",
+          "placeholder-opacity-50",
+          "placeholder:transition-all",
+          "transition-all",
+          "duration-200",
+          "ease-in-out",
+          "focus:placeholder-opacity-0",
           error &&
             "border-red-600 ring-1 ring-inset ring-red-600 focus:ring-2 focus:ring-inset focus:ring-red-600 ",
           disabled && "opacity-50 cursor-default"

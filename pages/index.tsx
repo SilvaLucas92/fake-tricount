@@ -6,7 +6,7 @@ import { Inter } from "next/font/google";
 import clsx from "clsx";
 import { Layout } from "@/components/Layout/Layout";
 import { Input } from "@/components/Input";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 const inter = Inter({ subsets: ["latin"] });
 
 interface DataTypes {
@@ -17,7 +17,7 @@ interface DataTypes {
   id: number;
 }
 
-const data: DataTypes[] = [
+const datas: DataTypes[] = [
   {
     title: "Marzo",
     description: "gastos hogar",
@@ -41,8 +41,29 @@ const data: DataTypes[] = [
   },
 ];
 
+import { useSession } from "next-auth/react";
+import axios from "axios";
+
 export default function Home() {
-  const [errors, setErrors] = useState("");
+  const session = useSession();
+  const [data, setData] = useState([]);
+
+  const apiCall = useCallback(async () => {
+    const email = session?.data?.user?.email;
+    try {
+      const response = await axios.get(`/api/counts/getCounts?email=${email}`);
+      setData(response.data);
+    } catch (err) {
+      console.log(err);
+    }
+  }, [session?.data?.user?.email]);
+
+  useEffect(() => {
+    apiCall();
+  }, [apiCall, data]);
+
+  console.log(data);
+
   return (
     <Layout>
       <main>
@@ -51,8 +72,8 @@ export default function Home() {
         {!data && <h2 className="p-10 text-5xl font-semibold">No Counts!</h2>}
         {data && (
           <div className={clsx("flex", "flex-col", "gap-5", "mt-10")}>
-            {data.map((item) => (
-              <Counts data={item as DataTypes} key={item.title} />
+            {data?.map((item) => (
+              <Counts data={item as DataTypes} key={item?.title} />
             ))}
           </div>
         )}
