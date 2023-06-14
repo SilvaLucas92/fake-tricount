@@ -8,6 +8,9 @@ import axios from "axios";
 import { AddButton } from "@/components/AddButton";
 import { GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
+import { addNewDetail, getAllDetails } from "@/services/countsDetails";
+import { getCountByID } from "@/services/counts";
+import { ShowNotification } from "@/components/ShowNotification";
 
 interface Alert {
   type: string;
@@ -15,8 +18,6 @@ interface Alert {
 }
 const CountsDetails = () => {
   const { query } = useRouter();
-  const [shouldFetchCountsDetails, setShouldFetchCountsDetails] =
-    useState(true);
   const [open, setOpen] = useState<boolean>(false);
   const [allCounts, setAllCounts] = useState([]);
   const [actualCount, setActualCount] = useState<any>([]);
@@ -25,8 +26,9 @@ const CountsDetails = () => {
 
   const fetchData = useCallback(async () => {
     try {
-      const response = await axios.get(`/api/counts/getCount?id=${query.id}`);
-      setActualCount(response.data);
+      const id = query.id as string | undefined | null;
+      const response = await getCountByID(id);
+      setActualCount(response);
     } catch (err) {
       setAlert({
         type: "error",
@@ -37,10 +39,9 @@ const CountsDetails = () => {
 
   const fetchCountsDetails = useCallback(async () => {
     try {
-      const response = await axios.get(
-        `/api/details/getDetailsCounts?id=${query.id}`
-      );
-      setAllCounts(response.data);
+      const id = query.id as string | undefined | null;
+      const response = await getAllDetails(id);
+      setAllCounts(response);
     } catch (err) {
       setAlert({
         type: "error",
@@ -52,15 +53,15 @@ const CountsDetails = () => {
   const onSubmit = useCallback(
     async (values: any) => {
       try {
-        const response = await axios.post("/api/details/addNew", {
+        const payload = {
           countDetail: {
             ...values,
             countID: query.id,
           },
-        });
-        if (response?.data) {
-          setShouldFetchCountsDetails(true);
-          return response.data;
+        };
+        const response = await addNewDetail(payload);
+        if (response) {
+          fetchCountsDetails();
         }
       } catch (error) {
         setAlert({
@@ -69,17 +70,13 @@ const CountsDetails = () => {
         });
       }
     },
-    [query.id, setAlert]
+    [fetchCountsDetails, query.id]
   );
 
   useEffect(() => {
     fetchData();
-
-    if (shouldFetchCountsDetails) {
-      fetchCountsDetails();
-      setShouldFetchCountsDetails(false);
-    }
-  }, [fetchData, fetchCountsDetails, shouldFetchCountsDetails]);
+    fetchCountsDetails();
+  }, []);
 
   const selectOptions = [
     {
@@ -132,12 +129,18 @@ const CountsDetails = () => {
                 </div>
                 <div>
                   <h5 className="font-semibold">{`$ ${item?.amount}`}</h5>
-                  {/* <p>06/12/24</p> */}
                 </div>
               </div>
             )
           )}
         </div>
+      )}
+      {alert && (
+        <ShowNotification
+          type={alert?.type}
+          msg={alert?.msg}
+          setAlert={setAlert}
+        />
       )}
       <AddForm
         open={open}

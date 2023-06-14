@@ -11,6 +11,7 @@ import { ShowNotification } from "@/components/ShowNotification";
 import { GetServerSidePropsContext } from "next";
 import { AddButton } from "@/components/AddButton";
 import AddForm from "@/components/Navbar/AddForm";
+import { addNewCount, getAllCounts } from "@/services/counts";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -38,8 +39,8 @@ export default function Home() {
   const apiCall = useCallback(async () => {
     const email = session?.data?.user?.email;
     try {
-      const response = await axios.get(`/api/counts/getCounts?email=${email}`);
-      setData(response.data);
+      const response = await getAllCounts(email);
+      setData(response);
     } catch (err) {
       setAlert({
         type: "error",
@@ -49,20 +50,17 @@ export default function Home() {
   }, [session?.data?.user?.email]);
 
   useEffect(() => {
-    if (shouldFetch) {
-      apiCall();
-      setShouldFetch(false);
-    }
-  }, [data, shouldFetch]);
+    apiCall();
+  }, []);
 
   const onSubmit = async (values: any) => {
     try {
-      const response = await axios.post("/api/counts/addCounts", {
+      const payload = {
         counts: { ...values, created_by: session.data?.user?.email },
-      });
-      if (response?.data) {
-        setShouldFetch(true);
-        return response.data;
+      };
+      const response = await addNewCount(payload);
+      if (response) {
+        apiCall();
       }
     } catch (error) {
       setAlert({

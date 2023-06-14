@@ -5,7 +5,6 @@ const countsSchema = new Schema({
   title: {
     type: String,
     required: true,
-    unique: true,
   },
   description: { type: String, required: true },
   created_by: { type: String, required: true },

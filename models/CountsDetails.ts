@@ -5,7 +5,6 @@ const countsDetailsSchema = new Schema({
   title: {
     type: String,
     required: true,
-    unique: true,
   },
   amount: {
     type: Number,
@@ -21,7 +20,6 @@ const countsDetailsSchema = new Schema({
   countID: {
     type: String,
     required: true,
-    unique: true,
   },
 });
 
