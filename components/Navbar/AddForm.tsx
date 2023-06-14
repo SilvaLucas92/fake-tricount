@@ -4,7 +4,6 @@ import { Button } from "../Button";
 import { Input } from "../Input";
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import axios from "axios";
 import { useRouter } from "next/router";
 import Select from "../Select";
 import { useEffect } from "react";
@@ -18,7 +17,7 @@ const AddForm = ({
   data,
   setData,
 }: any) => {
-  const router = useRouter();
+  console.log("data", data);
 
   const initialValues =
     formType === "count"
@@ -46,10 +45,10 @@ const AddForm = ({
   useEffect(() => {
     if (data) {
       formik.setValues({
-        title: data?.title || "",
-        amount: data?.amount || "",
-        created_at: data?.created_at || "",
-        paid_by: data?.paid_by || "",
+        title: data?.title,
+        amount: data?.amount,
+        created_at: data?.created_at,
+        paid_by: data?.paid_by,
       });
     }
   }, [data]);
@@ -69,10 +68,15 @@ const AddForm = ({
     },
   });
 
-  console.log(formik.errors)
-
   return (
-    <Modal open={open} onOpenChange={() => onOpenChange(false)}>
+    <Modal
+      open={open}
+      onOpenChange={() => {
+        setData(null);
+        onOpenChange(false);
+        formik.resetForm();
+      }}
+    >
       <Modal.Portal>
         <Modal.Overlay />
         <Modal.Content>

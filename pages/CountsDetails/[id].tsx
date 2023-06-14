@@ -133,76 +133,76 @@ const CountsDetails = () => {
       label: data?.user?.name,
     },
   ];
-  console.log(editData);
+
   return (
     <Layout>
-      {allCounts.length === 0 && (
+      <div>
+        <h2>{actualCount.title}</h2>
+        <h3>Balance</h3>
+      </div>
+      {allCounts.length === 0 ? (
         <div className="flex justify-between items-center">
           <h2 className="py-10 text-xl font-semibold">
             You don t have counts to show
           </h2>
           <AddButton onClick={() => setOpen(true)} />
         </div>
-      )}
-
-      {allCounts.length > 0 && (
-        <div className={clsx("flex", "flex-col", "gap-5", "mt-10")}>
-          <div className="flex justify-between items-center w-full mb-10">
-            <h4>Count Detail</h4>
+      ) : (
+        <div className="w-full p-5 bg-white border border-gray-200 rounded-lg shadow ">
+          <div className="flex items-center justify-between mb-5">
+            <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
+              Latest Counts
+            </h5>
             <AddButton onClick={() => setOpen(true)} />
           </div>
-          {allCounts.map(
-            (item: {
-              title: string;
-              amount: number;
-              paid_by: string;
-              _id: string;
-            }) => (
-              <div
-                className={clsx(
-                  "w-full",
-                  "border",
-                  "border-gray-100",
-                  "rounded-md",
-
-                  "flex",
-                  "justify-between",
-                  "items-center",
-                  "py-5",
-                  "px-10"
+          <div className="flow-root">
+            <ul
+              role="list"
+              className="divide-y divide-gray-200 dark:divide-gray-700"
+            >
+              {allCounts.length > 0 &&
+                allCounts.map(
+                  (item: {
+                    title: string;
+                    amount: number;
+                    paid_by: string;
+                    _id: string;
+                  }) => (
+                    <li key={item._id} className="py-3 sm:py-4">
+                      <div className="flex items-center justify-between ">
+                        <div className="flex items-center gap-2">
+                          <p className="text-md font-medium text-gray-900 truncate">
+                            {item.title}
+                          </p>
+                          <IconPencil
+                            onClick={() => {
+                              setOpen(true);
+                              setEditData(item);
+                            }}
+                            className="w-4 h-4 cursor-pointer"
+                          />{" "}
+                          <IconTrash
+                            onClick={() =>
+                              setOpenDeleteModal({
+                                open: true,
+                                id: item?._id,
+                              })
+                            }
+                            className="w-4 h-4 cursor-pointer"
+                          />
+                        </div>
+                        <div className="inline-flex items-center text-base font-semibold text-gray-900">
+                          ${item.amount}
+                        </div>
+                      </div>
+                    </li>
+                  )
                 )}
-                key={item?.title}
-              >
-                <div className="flex-col">
-                  <h5 className="font-semibold">{item?.title}</h5>
-                  <p>{`ha sido pagado por ${item?.paid_by}`}</p>
-                </div>
-                <div>
-                  <h5 className="font-semibold">{`$ ${item?.amount}`}</h5>
-                  <button
-                    onClick={() =>
-                      setOpenDeleteModal({
-                        open: true,
-                        id: item?._id,
-                      })
-                    }
-                  >
-                    <IconTrash />
-                  </button>
-                  <button
-                    onClick={() => {
-                      setOpen(true);
-                      setEditData(item);
-                    }}
-                  >
-                    <IconPencil />
-                  </button>
-                </div>
-              </div>
-            )
-          )}
+            </ul>
+          </div>
         </div>
       )}
+
       {alert && (
         <ShowNotification
           type={alert?.type}

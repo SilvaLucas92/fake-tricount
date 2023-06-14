@@ -12,7 +12,7 @@ export const Input = ({
   placeholder,
 }: {
   name: string;
-  error?: string;
+  error?: any;
   label?: string;
   disabled?: boolean;
   value?: string;
