@@ -12,7 +12,7 @@ interface postProps {
 }
 
 export const getAllDetails = async (id: string | undefined | null) => {
-  const url = `222222/api/details/getDetailsCounts?id=${id}`;
+  const url = `/api/details/getDetailsCounts?id=${id}`;
   const response = await axios.get(url);
   return response.data;
 };
