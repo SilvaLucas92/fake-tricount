@@ -8,7 +8,8 @@ const Counts = ({ data }: any) => {
       className={clsx(
         "w-full",
         "border",
-        "border-gray-300",
+        "border-gray-200",
+        'shadow',
         "rounded-md",
         "flex",
         "justify-between",

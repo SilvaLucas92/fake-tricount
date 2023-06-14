@@ -8,9 +8,16 @@ import axios from "axios";
 import { AddButton } from "@/components/AddButton";
 import { GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
-import { addNewDetail, getAllDetails } from "@/services/countsDetails";
+import {
+  addNewDetail,
+  deleteDetail,
+  getAllDetails,
+  updateDetail,
+} from "@/services/countsDetails";
 import { getCountByID } from "@/services/counts";
 import { ShowNotification } from "@/components/ShowNotification";
+import { IconPencil, IconTrash } from "@tabler/icons-react";
+import DeleteModal from "@/components/DeleteModal/DeleteModal";
 
 interface Alert {
   type: string;
@@ -19,6 +26,11 @@ interface Alert {
 const CountsDetails = () => {
   const { query } = useRouter();
   const [open, setOpen] = useState<boolean>(false);
+  const [editData, setEditData] = useState<any>(null);
+  const [openDeleteModal, setOpenDeleteModal] = useState<any>({
+    open: false,
+    id: "",
+  });
   const [allCounts, setAllCounts] = useState([]);
   const [actualCount, setActualCount] = useState<any>([]);
   const [alert, setAlert] = useState<Alert | null>(null);
@@ -73,6 +85,39 @@ const CountsDetails = () => {
     [fetchCountsDetails, query.id]
   );
 
+  const onDelete = async (id: string | undefined | null) => {
+    try {
+      const response = await deleteDetail(id);
+      if (response) {
+        fetchCountsDetails();
+        setOpenDeleteModal({
+          open: false,
+          id: "",
+        });
+      }
+    } catch (error) {
+      setAlert({
+        type: "error",
+        msg: `something went wrong, Please try again later.`,
+      });
+    }
+  };
+
+  const onUpdate = async (id: string | undefined | null, payload: any) => {
+    try {
+      const response = await updateDetail(id, payload);
+      if (response) {
+        fetchCountsDetails();
+        setOpen(false);
+      }
+    } catch (error) {
+      setAlert({
+        type: "error",
+        msg: `something went wrong, Please try again later.`,
+      });
+    }
+  };
+
   useEffect(() => {
     fetchData();
     fetchCountsDetails();
@@ -88,7 +133,7 @@ const CountsDetails = () => {
       label: data?.user?.name,
     },
   ];
-
+  console.log(editData);
   return (
     <Layout>
       {allCounts.length === 0 && (
@@ -107,7 +152,12 @@ const CountsDetails = () => {
             <AddButton onClick={() => setOpen(true)} />
           </div>
           {allCounts.map(
-            (item: { title: string; amount: number; paid_by: string }) => (
+            (item: {
+              title: string;
+              amount: number;
+              paid_by: string;
+              _id: string;
+            }) => (
               <div
                 className={clsx(
                   "w-full",
@@ -129,6 +179,24 @@ const CountsDetails = () => {
                 </div>
                 <div>
                   <h5 className="font-semibold">{`$ ${item?.amount}`}</h5>
+                  <button
+                    onClick={() =>
+                      setOpenDeleteModal({
+                        open: true,
+                        id: item?._id,
+                      })
+                    }
+                  >
+                    <IconTrash />
+                  </button>
+                  <button
+                    onClick={() => {
+                      setOpen(true);
+                      setEditData(item);
+                    }}
+                  >
+                    <IconPencil />
+                  </button>
                 </div>
               </div>
             )
@@ -145,10 +213,19 @@ const CountsDetails = () => {
       <AddForm
         open={open}
         onOpenChange={setOpen}
-        onSubmit={onSubmit}
+        onSubmit={editData ? onUpdate : onSubmit}
         formType="detail"
         participants={selectOptions}
+        data={editData}
+        setData={setEditData}
       />
+      {openDeleteModal.open && (
+        <DeleteModal
+          open={openDeleteModal}
+          onOpenChange={setOpenDeleteModal}
+          onDelete={() => onDelete(openDeleteModal.id)}
+        />
+      )}
     </Layout>
   );
 };

@@ -1,5 +1,4 @@
 import clsx from "clsx";
-import { twMerge } from "tailwind-merge";
 
 export const Input = ({
   name,
@@ -8,8 +7,9 @@ export const Input = ({
   disabled,
   value,
   onChange,
-  onBlur,
+
   type,
+  placeholder,
 }: {
   name: string;
   error?: string;
@@ -17,15 +17,14 @@ export const Input = ({
   disabled?: boolean;
   value?: string;
   onChange?: any;
-  onBlur?: boolean;
-
+  placeholder?: string;
   type: string;
 }) => {
   return (
     <div>
       <label
         htmlFor={name}
-        className={clsx("mb-2", "block", "text-sm", "font-medium")}
+        className={"block mb-2 text-sm font-medium text-gray-900"}
       >
         {label}
       </label>
@@ -35,25 +34,22 @@ export const Input = ({
         value={value}
         name={name}
         className={clsx(
-          "w-full",
-          "bg-gray-100",
-          "outline-none",
+          "bg-gray-50",
           "border",
-          "py-2.5",
-          "rounded-md",
-          "px-1",
-          "placeholder-gray-600",
-          "placeholder-opacity-50",
-          "placeholder:transition-all",
-          "transition-all",
-          "duration-200",
-          "ease-in-out",
-          "focus:placeholder-opacity-0",
+          "border-gray-300",
+          "text-gray-900",
+          "text-sm",
+          "rounded-lg",
+          "block",
+          "w-full",
+          "p-2.5",
           error &&
-            "border-red-600 ring-1 ring-inset ring-red-600 focus:ring-2 focus:ring-inset focus:ring-red-600 ",
+            "border-red-600 ring-1 ring-inset ring-red-600 focus:ring-2 focus:ring-inset focus:ring-red-600",
           disabled && "opacity-50 cursor-default"
         )}
+        placeholder={placeholder ?? ""}
       />
+
       {error && <span className="text-[13px] text-red-600">{error}</span>}
     </div>
   );

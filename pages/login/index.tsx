@@ -5,6 +5,8 @@ import { Input } from "@/components/Input";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { useState } from "react";
+import { ShowNotification } from "@/components/ShowNotification";
 
 const initialValues: { password: string; email: string } = {
   password: "",
@@ -18,13 +20,22 @@ const validationSchema = Yup.object({
     .required("Email is required"),
 });
 
+interface Alert {
+  type: string;
+  msg: string;
+}
+
 const Login = () => {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [alert, setAlert] = useState<Alert | null>(null);
+
   const onSubmit = async (values: {
     password: string;
     email: string;
     name?: string;
   }) => {
+    setIsLoading(true);
     try {
       const loginRes = await signIn("credentials", {
         redirect: false,
@@ -32,12 +43,21 @@ const Login = () => {
         password: values.password,
       });
       if (loginRes && !loginRes.ok) {
-        console.log(loginRes.error || "asas");
+        setAlert({
+          type: "error",
+          msg: `something went wrong, Please try again later.`,
+        });
+        setIsLoading(false);
       } else {
         router.push("/");
+        setIsLoading(false);
       }
     } catch (error) {
-      console.error("An error occurred:", error);
+      setAlert({
+        type: "error",
+        msg: `something went wrong, Please try again later.`,
+      });
+      setIsLoading(false);
     }
   };
 
@@ -49,10 +69,10 @@ const Login = () => {
 
   return (
     <form onSubmit={formik.handleSubmit}>
-      <section className="h-screen flex justify-center items-center bg-gray-50">
+      <section className="h-screen flex justify-center items-center">
         {" "}
-        <div className="w-full p-10 md:w-2/4 mx-auto flex flex-col  gap-5 bg-white rounded-lg shadow">
-          <h2 className="text-2xl	">Welcome Back, Sign in to your account!</h2>
+        <div className="w-full p-10 md:w-1/4 mx-auto flex flex-col  gap-5 bg-white border border-gray-200 rounded-lg shadow">
+          <h2 className="text-2xl	text-gray-900">Welcome Back, Sign In!</h2>
           <Input
             type="text"
             name="email"
@@ -77,17 +97,30 @@ const Login = () => {
                 : ""
             }
           />
-          <Button text="Submit" variant="filled" w="w-full" margin={"mt-2"} />
+          <Button
+            loading={isLoading}
+            text="Submit"
+            variant="filled"
+            w="w-full"
+            margin={"mt-2"}
+          />
           <p className="text-sm  text-gray-500">
             Don’t have an account yet?{" "}
             <Link
               href="/register"
-              className="font-medium text-primary-600 hover:underline"
+              className="text-blue-600 hover:underline dark:text-blue-500"
             >
               Sign up
             </Link>
           </p>
         </div>
+        {alert && (
+          <ShowNotification
+            type={alert?.type}
+            msg={alert?.msg}
+            setAlert={setAlert}
+          />
+        )}
       </section>
     </form>
   );

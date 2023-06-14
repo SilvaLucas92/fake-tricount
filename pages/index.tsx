@@ -93,7 +93,7 @@ export default function Home() {
         {data.length > 0 && (
           <div className={clsx("flex", "flex-col", "gap-5", "mt-10")}>
             <div className="flex justify-between items-center">
-              <h4>Counts</h4>
+              <h4 className={clsx("text-2xl", "font-semibold", "text-gray-900", "mt-5")}>Counts</h4>
               <AddButton onClick={() => setOpen(true)} />
             </div>
             {data?.map((item, index) => (

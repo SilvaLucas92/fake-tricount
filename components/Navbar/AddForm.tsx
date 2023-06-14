@@ -7,6 +7,7 @@ import { useFormik } from "formik";
 import axios from "axios";
 import { useRouter } from "next/router";
 import Select from "../Select";
+import { useEffect } from "react";
 
 const AddForm = ({
   open,
@@ -14,13 +15,20 @@ const AddForm = ({
   onSubmit,
   formType,
   participants,
+  data,
+  setData,
 }: any) => {
   const router = useRouter();
 
   const initialValues =
     formType === "count"
       ? { title: "", description: "", participant: "" }
-      : { title: "", amount: "", created_at: "", paid_by: "" };
+      : {
+          title: data?.title || "",
+          amount: data?.amount || "",
+          created_at: data?.created_at || "",
+          paid_by: data?.paid_by || "",
+        };
 
   const validationSchema =
     formType === "count"
@@ -35,17 +43,36 @@ const AddForm = ({
           paid_by: Yup.string().required("Paid by is required"),
         });
 
+  useEffect(() => {
+    if (data) {
+      formik.setValues({
+        title: data?.title || "",
+        amount: data?.amount || "",
+        created_at: data?.created_at || "",
+        paid_by: data?.paid_by || "",
+      });
+    }
+  }, [data]);
+
   const formik = useFormik({
     initialValues: initialValues,
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      onSubmit(values);
+      if (data) {
+        onSubmit(data._id, values);
+        setData(null);
+      } else {
+        onSubmit(values);
+      }
       onOpenChange(false);
       formik.resetForm();
     },
   });
+
+  console.log(formik.errors)
+
   return (
-    <Modal open={open} onOpenChange={onOpenChange}>
+    <Modal open={open} onOpenChange={() => onOpenChange(false)}>
       <Modal.Portal>
         <Modal.Overlay />
         <Modal.Content>
@@ -113,6 +140,7 @@ const AddForm = ({
                     data={participants}
                     onChange={(value) => formik.setFieldValue("paid_by", value)}
                     name="paid_by"
+                    value={formik.values.paid_by}
                   />
                 </>
               )}

@@ -16,7 +16,7 @@ export const ShowNotification = ({
     const timeout = setTimeout(() => {
       setVisible(false);
       setAlert(null);
-    }, 8000);
+    }, 5000);
 
     return () => {
       clearTimeout(timeout);

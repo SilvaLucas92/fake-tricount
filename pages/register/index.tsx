@@ -5,6 +5,8 @@ import { Input } from "@/components/Input";
 import axios from "axios";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { useState } from "react";
+import { ShowNotification } from "@/components/ShowNotification";
 
 const initialValues: { password: string; email: string; name?: string } = {
   password: "",
@@ -20,22 +22,34 @@ const validationSchema = Yup.object({
   name: Yup.string().required("Name is required"),
 });
 
+interface Alert {
+  type: string;
+  msg: string;
+}
+
 const Register = () => {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [alert, setAlert] = useState<Alert | null>(null);
+
   const onSubmit = async (values: {
     password: string;
     email: string;
     name?: string;
   }) => {
+    setIsLoading(true);
     try {
       const response = await axios.post("/api/auth/register", { user: values });
       if (response.data) {
         router.push("/login");
-        return response.data;
+        setIsLoading(false);
       }
     } catch (error) {
-      console.error("An error occurred:", error);
-      throw error;
+      setAlert({
+        type: "error",
+        msg: `something went wrong, Please try again later.`,
+      });
+      setIsLoading(false);
     }
   };
 
@@ -47,10 +61,10 @@ const Register = () => {
 
   return (
     <form onSubmit={formik.handleSubmit} className="">
-      <section className="h-screen  flex justify-center items-center bg-gray-50">
+      <section className="h-screen  flex justify-center items-center">
         {" "}
-        <div className="w-full p-10 md:w-2/4 mx-auto flex flex-col  gap-5 bg-white rounded-lg shadow">
-          <h2 className="text-2xl">Register</h2>
+        <div className="w-full p-10 md:w-1/4 mx-auto flex flex-col  gap-5 bg-white border border-gray-200 rounded-lg shadow">
+          <h2 className="text-2xl	text-gray-900">Register</h2>
           <Input
             type="text"
             name="name"
@@ -87,17 +101,30 @@ const Register = () => {
                 : ""
             }
           />
-          <Button w="w-full" text="Submit" variant="filled" margin={"my-2"} />
+          <Button
+            loading={isLoading}
+            w="w-full"
+            text="Submit"
+            variant="filled"
+            margin={"my-2"}
+          />
           <p className="text-sm  text-gray-500">
             Already have an account?{" "}
             <Link
               href="/login"
-              className="font-medium text-primary-600 hover:underline"
+              className="text-blue-600 hover:underline dark:text-blue-500"
             >
               Login here
             </Link>
           </p>
         </div>
+        {alert && (
+          <ShowNotification
+            type={alert?.type}
+            msg={alert?.msg}
+            setAlert={setAlert}
+          />
+        )}
       </section>
     </form>
   );
