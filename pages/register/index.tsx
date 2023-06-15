@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { useState } from "react";
 import { ShowNotification } from "@/components/ShowNotification";
+import { Alert } from "@/types/types";
 
 const initialValues: { password: string; email: string; name?: string } = {
   password: "",
@@ -21,11 +22,6 @@ const validationSchema = Yup.object({
     .required("Email is required"),
   name: Yup.string().required("Name is required"),
 });
-
-interface Alert {
-  type: string;
-  msg: string;
-}
 
 const Register = () => {
   const router = useRouter();

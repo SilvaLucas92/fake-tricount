@@ -72,7 +72,7 @@ export default function Home() {
 
   return (
     <Layout>
-      <main>
+      <main className="mb-20">
         <Hero />
         {alert && (
           <ShowNotification

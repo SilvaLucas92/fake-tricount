@@ -6,7 +6,18 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 import { useRouter } from "next/router";
 import Select from "../Select";
-import { useEffect } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
+import { CountItem, selectOptions } from "@/types/types";
+
+interface formProps {
+  open: boolean;
+  onOpenChange: Dispatch<SetStateAction<boolean>>;
+  onSubmit: any;
+  formType?: string;
+  participants: selectOptions[];
+  data: CountItem | null;
+  setData: Dispatch<SetStateAction<CountItem | null>>;
+}
 
 const AddForm = ({
   open,
@@ -16,9 +27,7 @@ const AddForm = ({
   participants,
   data,
   setData,
-}: any) => {
-  console.log("data", data);
-
+}: formProps) => {
   const initialValues =
     formType === "count"
       ? { title: "", description: "", participant: "" }
@@ -47,7 +56,7 @@ const AddForm = ({
       formik.setValues({
         title: data?.title,
         amount: data?.amount,
-        created_at: data?.created_at,
+        created_at: data?.created_at || "",
         paid_by: data?.paid_by,
       });
     }

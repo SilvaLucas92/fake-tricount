@@ -1,3 +1,4 @@
+import { InputProps } from "@/types/types";
 import clsx from "clsx";
 
 export const Input = ({
@@ -7,19 +8,9 @@ export const Input = ({
   disabled,
   value,
   onChange,
-
   type,
   placeholder,
-}: {
-  name: string;
-  error?: any;
-  label?: string;
-  disabled?: boolean;
-  value?: string;
-  onChange?: any;
-  placeholder?: string;
-  type: string;
-}) => {
+}: InputProps) => {
   return (
     <div>
       <label
