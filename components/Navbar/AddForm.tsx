@@ -14,9 +14,9 @@ interface formProps {
   onOpenChange: Dispatch<SetStateAction<boolean>>;
   onSubmit: any;
   formType?: string;
-  participants: selectOptions[];
-  data: CountItem | null;
-  setData: Dispatch<SetStateAction<CountItem | null>>;
+  participants?: selectOptions[];
+  data?: CountItem | null | undefined;
+  setData?: Dispatch<SetStateAction<CountItem | null | undefined>>;
 }
 
 const AddForm = ({
@@ -66,7 +66,7 @@ const AddForm = ({
     initialValues: initialValues,
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      if (data) {
+      if (data && setData) {
         onSubmit(data._id, values);
         setData(null);
       } else {
@@ -81,7 +81,7 @@ const AddForm = ({
     <Modal
       open={open}
       onOpenChange={() => {
-        setData(null);
+        data && setData && setData(null);
         onOpenChange(false);
         formik.resetForm();
       }}
@@ -150,7 +150,7 @@ const AddForm = ({
                   />
                   <Select
                     label="Paid by"
-                    data={participants}
+                    data={participants ?? []}
                     onChange={(value) => formik.setFieldValue("paid_by", value)}
                     name="paid_by"
                     value={formik.values.paid_by}

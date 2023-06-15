@@ -3,37 +3,21 @@ import Hero from "@/components/Hero/Hero";
 import { Inter } from "next/font/google";
 import clsx from "clsx";
 import { Layout } from "@/components/Layout/Layout";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useSession, getSession } from "next-auth/react";
-import axios from "axios";
 import { ShowNotification } from "@/components/ShowNotification";
 import { GetServerSidePropsContext } from "next";
 import { AddButton } from "@/components/AddButton";
 import AddForm from "@/components/Navbar/AddForm";
 import { addNewCount, getAllCounts } from "@/services/counts";
-
+import { Alert, Count } from "@/types/types";
 const inter = Inter({ subsets: ["latin"] });
-
-interface DataTypes {
-  title: string;
-  description: string;
-  created_by: string;
-  participants: string[];
-  id: number;
-}
-
-interface Alert {
-  type: string;
-  msg: string;
-}
 
 export default function Home() {
   const session = useSession();
-  const [shouldFetch, setShouldFetch] = useState(true);
   const [data, setData] = useState([]);
   const [alert, setAlert] = useState<Alert | null>(null);
-  const { push } = useRouter();
   const [open, setOpen] = useState<boolean>(false);
 
   const apiCall = useCallback(async () => {
@@ -53,12 +37,12 @@ export default function Home() {
     apiCall();
   }, []);
 
-  const onSubmit = async (values: any) => {
+  const onSubmit = async (values: Count) => {
     try {
       const payload = {
         counts: { ...values, created_by: session.data?.user?.email },
       };
-      const response = await addNewCount(payload);
+      const response = await addNewCount(payload as any);
       if (response) {
         apiCall();
       }
@@ -81,7 +65,6 @@ export default function Home() {
             setAlert={setAlert}
           />
         )}
-        <hr />
         {data && data?.length === 0 && (
           <div className="flex justify-between items-center">
             <h2 className="py-10 text-xl font-semibold">
@@ -93,11 +76,21 @@ export default function Home() {
         {data.length > 0 && (
           <div className={clsx("flex", "flex-col", "gap-5", "mt-10")}>
             <div className="flex justify-between items-center">
-              <h4 className={clsx("text-2xl", "font-semibold", "text-gray-900", "mt-5")}>Counts</h4>
+              <h4
+                className={clsx(
+                  "text-2xl",
+                  "font-semibold",
+                  "text-gray-900",
+                  "self-center"
+                )}
+              >
+                Counts
+              </h4>
               <AddButton onClick={() => setOpen(true)} />
             </div>
+
             {data?.map((item, index) => (
-              <Counts data={item as DataTypes} key={index} />
+              <Counts data={item as Count} key={index} />
             ))}
           </div>
         )}

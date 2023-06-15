@@ -1,10 +1,8 @@
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import clsx from "clsx";
 import { Layout } from "@/components/Layout/Layout";
 import AddForm from "@/components/Navbar/AddForm";
-import { useCallback, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import axios from "axios";
 import { AddButton } from "@/components/AddButton";
 import { GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
@@ -14,11 +12,11 @@ import {
   getAllDetails,
   updateDetail,
 } from "@/services/countsDetails";
-import { getCountByID } from "@/services/counts";
 import { ShowNotification } from "@/components/ShowNotification";
 import { IconPencil, IconTrash } from "@tabler/icons-react";
 import DeleteModal from "@/components/DeleteModal/DeleteModal";
-import { Alert, Count, CountItem, selectOptions } from "@/types/types";
+import { Alert, CountItem, selectOptions } from "@/types/types";
+import { useCount } from "@/context/context";
 
 interface DeleteModalProps {
   open: boolean;
@@ -27,6 +25,7 @@ interface DeleteModalProps {
 
 const CountsDetails = () => {
   const { query } = useRouter();
+  const { actualCount } = useCount();
   const [open, setOpen] = useState<boolean>(false);
   const [editData, setEditData] = useState<CountItem | null>(null);
   const [openDeleteModal, setOpenDeleteModal] = useState<DeleteModalProps>({
@@ -34,25 +33,9 @@ const CountsDetails = () => {
     id: "",
   });
   const [allCounts, setAllCounts] = useState([]);
-  const [actualCount, setActualCount] = useState<Count | null>(null);
   const [alert, setAlert] = useState<Alert | null>(null);
   const [debt, setDebt] = useState<string>("");
   const { data } = useSession();
-
-  console.log(actualCount);
-
-  const fetchData = useCallback(async () => {
-    try {
-      const id = query.id as string | undefined | null;
-      const response = await getCountByID(id);
-      setActualCount(response);
-    } catch (err) {
-      setAlert({
-        type: "error",
-        msg: "Something went wrong. Please try again later.",
-      });
-    }
-  }, [query.id]);
 
   const fetchCountsDetails = useCallback(async () => {
     try {
@@ -151,27 +134,38 @@ const CountsDetails = () => {
   const calculateDebt = (results: Record<string, number>) => {
     const people = Object.keys(results);
 
-    if (people.length !== 2) return "";
+    let debt = "";
 
-    const person1 = people[0];
-    const person2 = people[1];
-
-    const debt1 = totalAmountByPerson[person1] - totalAmountByPerson[person2];
-
-    if (debt1 === 0) {
-      return "They are even. There is no debt between them.";
-    } else if (debt1 > 0) {
-      return `${person2} owes $ ${debt1} to ${person1}.`;
+    if (people.length === 0) {
+      debt = "No people found.";
+    } else if (people.length === 1) {
+      const person = people[0];
+      debt = `Can't calculate balance because only one person make expenses.`;
     } else {
-      return `${person1} owes $ ${Math.abs(debt1)} to ${person2}.`;
+      const person1 = people[0];
+      const person2 = people[1];
+
+      const debt1 = results[person1] - results[person2];
+
+      if (debt1 === 0) {
+        debt = "They are even. There is no debt between them.";
+      } else if (debt1 > 0) {
+        debt = `${person2} owes $${debt1} to ${person1}.`;
+      } else {
+        debt = `${person1} owes $${Math.abs(debt1)} to ${person2}.`;
+      }
     }
+
+    setDebt(debt);
   };
 
   useEffect(() => {
-    fetchData();
     fetchCountsDetails();
-    setDebt(calculateDebt(totalAmountByPerson));
   }, []);
+
+  useEffect(() => {
+    calculateDebt(totalAmountByPerson);
+  }, [allCounts]);
 
   const selectOptions = [
     {
@@ -184,10 +178,12 @@ const CountsDetails = () => {
     },
   ];
 
+  console.log(totalAmountByPerson);
+
   return (
     <Layout>
       <div className="flex flex-col gap-2.5 mt-5">
-        <div className="flex justify-start items-center gap-2.5">
+        <div className="flex  items-center gap-2.5">
           <h2 className="text-2xl font-semibold text-gray-900">
             {actualCount?.title}
           </h2>
@@ -199,9 +195,12 @@ const CountsDetails = () => {
             </>
           ))}
         </div>
-        {debt && <h3 className="text-lg font-normal ">Balance: {debt}</h3>}
+        {Object.keys(totalAmountByPerson).length === 2 && (
+          <p className="text-lg font-normal">
+            <span className="text-xl font-normal">Balance</span>: {debt}
+          </p>
+        )}
       </div>
-      <hr className="h-px mb-8 mt-5 bg-gray-200 border-0 "></hr>
       {allCounts.length === 0 ? (
         <div className="flex justify-between items-center">
           <h2 className="py-10 text-xl font-semibold">
@@ -210,7 +209,7 @@ const CountsDetails = () => {
           <AddButton onClick={() => setOpen(true)} />
         </div>
       ) : (
-        <div className="w-full p-5 bg-white border border-gray-200 rounded-lg shadow ">
+        <div className="w-full p-5 bg-white border border-gray-200 rounded-lg shadow mt-5">
           <div className="flex items-center justify-between mb-5">
             <h5 className="text-xl font-bold leading-none text-gray-900 ">
               Latest Counts
@@ -223,7 +222,7 @@ const CountsDetails = () => {
                 allCounts.map((item: CountItem) => (
                   <li key={item._id} className="py-3 sm:py-4">
                     <div className="flex items-center justify-between">
-                      <div className="flex flex-col">
+                      <div className="flex flex-col gap-1">
                         <p className="text-md font-medium text-gray-900">
                           {item.title}
                         </p>
@@ -235,17 +234,17 @@ const CountsDetails = () => {
                           </span>
                         </p>
                       </div>
-                      <div className="flex flex-col justify-start">
+                      <div className="flex flex-col justify-end  gap-2">
                         <p className="text-md font-medium text-gray-900">
                           ${item.amount}
                         </p>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 justify-end">
                           <IconPencil
                             onClick={() => {
                               setOpen(true);
                               setEditData(item as CountItem);
                             }}
-                            className="w-4 h-4 cursor-pointer text-green-600	"
+                            className="w-4 h-4 cursor-pointer text-green-600"
                           />{" "}
                           <IconTrash
                             onClick={() =>
@@ -288,7 +287,7 @@ const CountsDetails = () => {
         formType="detail"
         participants={selectOptions as selectOptions[]}
         data={editData}
-        setData={setEditData}
+        setData={setEditData as any}
       />
       {openDeleteModal.open && (
         <DeleteModal

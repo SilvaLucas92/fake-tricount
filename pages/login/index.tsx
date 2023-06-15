@@ -68,7 +68,7 @@ const Login = () => {
     <form onSubmit={formik.handleSubmit}>
       <section className="h-screen flex justify-center items-center">
         {" "}
-        <div className="w-full p-10 md:w-1/4 mx-auto flex flex-col  gap-5 bg-white border border-gray-200 rounded-lg shadow">
+        <div className="w-full p-10 md:w-2/4  lg:w-1/4  md:mx-auto mx-5 flex flex-col  gap-5 bg-white border border-gray-200 rounded-lg shadow ">
           <h2 className="text-2xl	text-gray-900">Welcome Back, Sign In!</h2>
           <Input
             type="text"

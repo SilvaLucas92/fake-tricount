@@ -20,9 +20,3 @@ export const addNewCount = async (payload: postNewCount) => {
   const response = await axios.post(url, payload);
   return response.data;
 };
-
-export const getCountByID = async (id: string | undefined | null) => {
-  const url = `/api/counts/getCount?id=${id}`;
-  const response = await axios.get(url);
-  return response.data;
-};
