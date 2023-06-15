@@ -14,7 +14,7 @@ const Navbar = () => {
         href="/"
         className="block font-bold  text-gray-900 text-2xl text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400"
       >
-        Split Counts
+        SplitCounts
       </Link>
       <button
         type="submit"
