@@ -46,9 +46,13 @@ const ModalContent = ({ children }: Dialog.DialogContentProps) => {
         "fixed",
         "z-[9999]",
         "overflow-x-hidden",
-        "w-1/4",
+        "w-full",
+        "p-10",
+        "md:w-2/4",
+        "lg:w-1/4",
         "p-5",
         "overflow-y-auto",
+        "md:mx-auto",
       )}
     >
       <>{children}</>
