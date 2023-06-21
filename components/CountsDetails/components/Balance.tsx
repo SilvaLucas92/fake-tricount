@@ -65,7 +65,7 @@ const Balance = ({
             <p className="text-lg font-medium text-gray-900">Total:</p>
             <p className="text-base font-semibold text-gray-900">${result} </p>
           </div>
-          <p>{debt}</p>
+          <p className="text-base font-semibold text-gray-900">{debt}</p>
         </>
       ) : (
         <h5 className="text-lg font-semibold text-gray-900 ">No Expenses.</h5>
