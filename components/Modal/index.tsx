@@ -52,7 +52,7 @@ const ModalContent = ({ children }: Dialog.DialogContentProps) => {
         "lg:w-1/4",
         "p-5",
         "overflow-y-auto",
-        "md:mx-auto",
+        "md:mx-auto"
       )}
     >
       <>{children}</>

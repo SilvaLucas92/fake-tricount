@@ -4,7 +4,6 @@ import { Button } from "../Button";
 import { Input } from "../Input";
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import { useRouter } from "next/router";
 import Select from "../Select";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { CountItem, selectOptions } from "@/types/types";
@@ -43,7 +42,7 @@ const AddForm = ({
       ? Yup.object({
           title: Yup.string().required("Title is required"),
           description: Yup.string().required("Description is required"),
-          participant: Yup.string().required("Participant is required"),
+          participants: Yup.string().required("Participant is required"),
         })
       : Yup.object({
           title: Yup.string().required("Title is required"),
@@ -123,7 +122,7 @@ const AddForm = ({
                   <Input
                     type="text"
                     label="Participant"
-                    name="participant"
+                    name="participants"
                     value={formik.values.participants}
                     onChange={formik.handleChange}
                     error={

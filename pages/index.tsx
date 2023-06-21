@@ -20,7 +20,7 @@ export default function Home() {
   const [alert, setAlert] = useState<Alert | null>(null);
   const [open, setOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const apiCall = useCallback(async () => {
     const email = session?.data?.user?.email;
     setIsLoading(true);
@@ -72,7 +72,7 @@ export default function Home() {
             setAlert={setAlert}
           />
         )}
-        {data && data?.length === 0 && (
+        {!isLoading && data?.length === 0 && (
           <div className="flex justify-between items-center">
             <h2 className="py-10 text-xl font-semibold">
               You don t have counts to show
