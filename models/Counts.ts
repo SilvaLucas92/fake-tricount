@@ -1,4 +1,4 @@
-import mongoose, { models } from "mongoose";
+import mongoose from "mongoose";
 const { Schema } = mongoose;
 
 const countsSchema = new Schema({
@@ -6,11 +6,20 @@ const countsSchema = new Schema({
     type: String,
     required: true,
   },
-  description: { type: String, required: true },
-  created_by: { type: String, required: true },
-  participant: { type: String, required: true },
+  description: {
+    type: String,
+    required: true,
+  },
+  created_by: {
+    type: String,
+    required: true,
+  },
+  participants: {
+    type: [String],
+    required: true,
+  },
 });
 
-const Counts = models.Counts || mongoose.model("Counts", countsSchema);
+const Counts = mongoose.models.Counts || mongoose.model("Counts", countsSchema);
 
 export default Counts;

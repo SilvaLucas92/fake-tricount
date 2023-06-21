@@ -30,7 +30,7 @@ const AddForm = ({
 }: formProps) => {
   const initialValues =
     formType === "count"
-      ? { title: "", description: "", participant: "" }
+      ? { title: "", description: "", participants: "" }
       : {
           title: data?.title || "",
           amount: data?.amount || "",
@@ -124,11 +124,11 @@ const AddForm = ({
                     type="text"
                     label="Participant"
                     name="participant"
-                    value={formik.values.participant}
+                    value={formik.values.participants}
                     onChange={formik.handleChange}
                     error={
-                      formik.touched.participant && formik.errors.participant
-                        ? formik.errors.participant
+                      formik.touched.participants && formik.errors.participants
+                        ? formik.errors.participants
                         : ""
                     }
                   />

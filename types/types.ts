@@ -29,7 +29,7 @@ export interface Count {
   title: string;
   description: string;
   created_by: string;
-  participant: string;
+  participants: string[];
 }
 
 export interface Alert {

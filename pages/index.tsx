@@ -11,6 +11,7 @@ import { AddButton } from "@/components/AddButton";
 import AddForm from "@/components/Navbar/AddForm";
 import { addNewCount, getAllCounts } from "@/services/counts";
 import { Alert, Count } from "@/types/types";
+import { Spinner } from "@/components/Spinner/Spinner";
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
@@ -18,9 +19,11 @@ export default function Home() {
   const [data, setData] = useState([]);
   const [alert, setAlert] = useState<Alert | null>(null);
   const [open, setOpen] = useState<boolean>(false);
-
+  const [isLoading, setIsLoading] = useState(false);
+  
   const apiCall = useCallback(async () => {
     const email = session?.data?.user?.email;
+    setIsLoading(true);
     try {
       const response = await getAllCounts(email);
       setData(response);
@@ -30,6 +33,7 @@ export default function Home() {
         msg: `something went wrong, Please try again later.`,
       });
     }
+    setIsLoading(false);
   }, [session?.data?.user?.email]);
 
   useEffect(() => {
@@ -39,7 +43,11 @@ export default function Home() {
   const onSubmit = async (values: Count) => {
     try {
       const payload = {
-        counts: { ...values, created_by: session.data?.user?.email },
+        counts: {
+          ...values,
+          created_by: session.data?.user?.email,
+          participants: [values.participants, session.data?.user?.name],
+        },
       };
       const response = await addNewCount(payload as any);
       if (response) {
@@ -72,7 +80,8 @@ export default function Home() {
             <AddButton onClick={() => setOpen(true)} />
           </div>
         )}
-        {data.length > 0 && (
+        {isLoading && <Spinner />}
+        {data.length > 0 && !isLoading && (
           <div className={clsx("flex", "flex-col", "gap-5", "mt-10")}>
             <div className="flex justify-between items-center">
               <h4

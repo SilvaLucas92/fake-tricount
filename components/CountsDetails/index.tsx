@@ -17,6 +17,7 @@ import * as Tabs from "@radix-ui/react-tabs";
 import Expenses from "./components/Expenses";
 import Balance from "./components/Balance";
 import TooltipComponent from "../Tooltip";
+import { Spinner } from "../Spinner/Spinner";
 
 interface DeleteModalProps {
   open: boolean;
@@ -34,10 +35,10 @@ const Detail = () => {
   });
   const [allCounts, setAllCounts] = useState([]);
   const [alert, setAlert] = useState<Alert | null>(null);
-  const [debt, setDebt] = useState<string>("");
-  const { data } = useSession();
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchCountsDetails = useCallback(async () => {
+    setIsLoading(true);
     try {
       const id = query.id as string | undefined | null;
       const response = await getAllDetails(id);
@@ -48,6 +49,7 @@ const Detail = () => {
         msg: "Something went wrong. Please try again later.",
       });
     }
+    setIsLoading(false);
   }, [query.id]);
 
   const totalAmountByPerson = allCounts.reduce(
@@ -129,75 +131,78 @@ const Detail = () => {
     fetchCountsDetails();
   }, []);
 
-  const selectOptions = [
-    {
-      value: actualCount?.participant,
-      label: actualCount?.participant,
-    },
-    {
-      value: data?.user?.name,
-      label: data?.user?.name,
-    },
-  ];
+  const selectOptions = actualCount?.participants.map((item) => {
+    return {
+      label: item,
+      value: item,
+    };
+  });
 
   return (
     <Layout>
-      <div className="flex flex-col gap-2.5 mt-5">
-        <div className="flex  items-center gap-2.5">
-          <h2 className="text-2xl font-semibold text-gray-900">
-            {actualCount?.title}
-          </h2>
+      {isLoading ? (
+        <Spinner />
+      ) : (
+        <>
+          {" "}
+          <div className="flex flex-col gap-2.5 mt-5">
+            <div className="flex  items-center gap-2.5">
+              <h2 className="text-2xl font-semibold text-gray-900">
+                {actualCount?.title}
+              </h2>
 
-          <TooltipComponent
-            label={Object.keys(totalAmountByPerson).map((item) => (
-              <p key={item}> {item}</p>
-            ))}
+              <TooltipComponent
+                label={actualCount?.participants?.map((item) => (
+                  <p key={item}> {item}</p>
+                ))}
+              >
+                <span className=" cursor-pointer bg-teal-100 text-teal-800 text-xs font-medium  p-1 rounded">
+                  {`${actualCount?.participants?.length} members`}
+                </span>
+              </TooltipComponent>
+            </div>
+          </div>
+          <Tabs.Root
+            className="flex flex-col w-full shadow-md my-5"
+            defaultValue="tab1"
           >
-            <span className=" cursor-pointer bg-teal-100 text-teal-800 text-xs font-medium  p-1 rounded">
-              {`${Object.keys(totalAmountByPerson).length} members`}
-            </span>
-          </TooltipComponent>
-        </div>
-      </div>
-      <Tabs.Root
-        className="flex flex-col w-full shadow-md my-5"
-        defaultValue="tab1"
-      >
-        <Tabs.List
-          className="shrink-0 flex border-b border-gray-200"
-          aria-label="Manage your account"
-        >
-          <Tabs.Trigger
-            className="bg-white px-5 h-[45px] flex-1 flex items-center justify-center text-[15px] leading-none text-mauve11 select-none first:rounded-tl-md last:rounded-tr-md hover:text-violet11 data-[state=active]:text-violet11 data-[state=active]:shadow-[inset_0_-1px_0_0,0_1px_0_0] data-[state=active]:shadow-current data-[state=active]:focus:relative data-[state=active]:focus:shadow-[0_0_0_2px] data-[state=active]:focus:shadow-black outline-none cursor-default"
-            value="expenses"
-          >
-            <p className="text-md font-medium text-gray-900">Expenses</p>
-          </Tabs.Trigger>
-          <Tabs.Trigger
-            className="bg-white px-5 h-[45px] flex-1 flex items-center justify-center text-[15px] leading-none text-mauve11 select-none first:rounded-tl-md last:rounded-tr-md hover:text-violet11 data-[state=active]:text-violet11 data-[state=active]:shadow-[inset_0_-1px_0_0,0_1px_0_0] data-[state=active]:shadow-current data-[state=active]:focus:relative data-[state=active]:focus:shadow-[0_0_0_2px] data-[state=active]:focus:shadow-black outline-none cursor-default"
-            value="balance"
-          >
-            <p className="text-md font-medium text-gray-900">Balance</p>
-          </Tabs.Trigger>
-        </Tabs.List>
-        <Tabs.Content
-          className="grow p-5 bg-white rounded-b-md outline-none focus:shadow-[0_0_0_2px] focus:shadow-black"
-          value="expenses"
-        >
-          <Expenses
-            setOpen={setOpen}
-            dataDetails={allCounts}
-            setEditData={setEditData}
-            setOpenDeleteModal={setOpenDeleteModal}
-          />
-        </Tabs.Content>
-        <Tabs.Content
-          className="grow p-5 bg-white rounded-b-md outline-none focus:shadow-[0_0_0_2px] focus:shadow-black"
-          value="balance"
-        >
-          <Balance totalByMember={totalAmountByPerson} />
-        </Tabs.Content>
-      </Tabs.Root>
+            <Tabs.List
+              className="shrink-0 flex border-b border-gray-200"
+              aria-label="Manage your account"
+            >
+              <Tabs.Trigger
+                className="bg-white px-5 h-[45px] flex-1 flex items-center justify-center text-[15px] leading-none text-mauve11 select-none first:rounded-tl-md last:rounded-tr-md hover:text-violet11 data-[state=active]:text-violet11 data-[state=active]:shadow-[inset_0_-1px_0_0,0_1px_0_0] data-[state=active]:shadow-current data-[state=active]:focus:relative data-[state=active]:focus:shadow-[0_0_0_2px] data-[state=active]:focus:shadow-black outline-none cursor-default"
+                value="expenses"
+              >
+                <p className="text-md font-medium text-gray-900">Expenses</p>
+              </Tabs.Trigger>
+              <Tabs.Trigger
+                className="bg-white px-5 h-[45px] flex-1 flex items-center justify-center text-[15px] leading-none text-mauve11 select-none first:rounded-tl-md last:rounded-tr-md hover:text-violet11 data-[state=active]:text-violet11 data-[state=active]:shadow-[inset_0_-1px_0_0,0_1px_0_0] data-[state=active]:shadow-current data-[state=active]:focus:relative data-[state=active]:focus:shadow-[0_0_0_2px] data-[state=active]:focus:shadow-black outline-none cursor-default"
+                value="balance"
+              >
+                <p className="text-md font-medium text-gray-900">Balance</p>
+              </Tabs.Trigger>
+            </Tabs.List>
+            <Tabs.Content
+              className="grow p-5 bg-white rounded-b-md outline-none focus:shadow-[0_0_0_2px] focus:shadow-black"
+              value="expenses"
+            >
+              <Expenses
+                setOpen={setOpen}
+                dataDetails={allCounts}
+                setEditData={setEditData}
+                setOpenDeleteModal={setOpenDeleteModal}
+              />
+            </Tabs.Content>
+            <Tabs.Content
+              className="grow p-5 bg-white rounded-b-md outline-none focus:shadow-[0_0_0_2px] focus:shadow-black"
+              value="balance"
+            >
+              <Balance totalByMember={totalAmountByPerson} />
+            </Tabs.Content>
+          </Tabs.Root>
+        </>
+      )}
 
       {alert && (
         <ShowNotification

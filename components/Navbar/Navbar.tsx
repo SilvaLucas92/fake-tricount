@@ -14,7 +14,12 @@ const Navbar = () => {
         href="/"
         className="block font-bold  text-gray-900 text-2xl text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400"
       >
-        SplitCounts
+        <div className="flex items-center gap-2">
+          SplitCounts{" "}
+          <span className="bg-yellow-100 text-yellow-800 text-xs font-small  px-2.5 py-1 rounded">
+            Beta
+          </span>
+        </div>
       </Link>
       <button
         type="submit"

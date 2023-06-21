@@ -70,7 +70,15 @@ const Login = () => {
         <section className="h-screen flex justify-center items-center">
           {" "}
           <div className="w-full p-10 md:w-2/4  lg:w-1/4  md:mx-auto mx-5 flex flex-col  gap-5 bg-white border border-gray-200 rounded-lg shadow ">
-            <h2 className="text-2xl	text-gray-900">Welcome Back, Sign In!</h2>
+            <h2 className="text-2xl	text-gray-900">
+              Welcome Back to{" "}
+              <span
+                className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400"
+                style={{ display: "inline" }}
+              >
+                Splitcounts!
+              </span>
+            </h2>
             <Input
               type="text"
               name="email"

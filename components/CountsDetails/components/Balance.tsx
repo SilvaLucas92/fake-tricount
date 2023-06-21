@@ -39,28 +39,37 @@ const Balance = ({
 
   return (
     <div className="flex flex-col gap-2.5">
-      {Object.keys(totalByMember).map((item) => (
-        <div className="flex items-center justify-between gap-2.5" key={item}>
-          <p className="text-md font-medium text-gray-900">{item} </p>
-          <div className="flex items-center">
-            <span
-              className={clsx(
-                "font-semibold",
-                totalByMember[item] < 0 ? "text-red-500" : "text-green-500"
-              )}
+      {Object.keys(totalByMember).length !== 0 ? (
+        <>
+          {Object.keys(totalByMember).map((item) => (
+            <div
+              className="flex items-center justify-between gap-2.5"
+              key={item}
             >
-              {" "}
-              $ {totalByMember[item]}
-            </span>
+              <p className="text-md font-medium text-gray-900">{item} </p>
+              <div className="flex items-center">
+                <span
+                  className={clsx(
+                    "font-semibold",
+                    totalByMember[item] < 0 ? "text-red-500" : "text-green-500"
+                  )}
+                >
+                  {" "}
+                  $ {totalByMember[item]}
+                </span>
+              </div>
+            </div>
+          ))}
+          <hr className="my-2" />
+          <div className="flex items-center justify-between">
+            <p className="text-lg font-medium text-gray-900">Total:</p>
+            <p className="text-base font-semibold text-gray-900">${result} </p>
           </div>
-        </div>
-      ))}
-      <hr className="my-2" />
-      <div className="flex items-center justify-between">
-        <p className="text-lg font-medium text-gray-900">Total:</p>
-        <p className="text-base font-semibold text-gray-900">${result} </p>
-      </div>
-      <p>{debt}</p>
+          <p>{debt}</p>
+        </>
+      ) : (
+        <h5 className="text-lg font-semibold text-gray-900 ">No Expenses.</h5>
+      )}
     </div>
   );
 };
