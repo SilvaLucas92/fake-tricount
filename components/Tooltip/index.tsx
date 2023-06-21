@@ -9,13 +9,16 @@ const TooltipComponent = ({
   label: any;
 }) => {
   return (
-    <Tooltip.Provider delayDuration={100}>
+    <Tooltip.Provider delayDuration={0}>
       <Tooltip.Root>
         <Tooltip.Trigger asChild>{children}</Tooltip.Trigger>
         <Tooltip.Portal>
-          <Tooltip.Content className=" text-white select-none rounded-md bg-black p-2 text-sm">
+          <Tooltip.Content
+            side="bottom"
+            className=" text-white select-none rounded-md bg-black p-2 text-sm"
+          >
             {label}
-            <Tooltip.Arrow className="fill-white" />
+            <Tooltip.Arrow className="fill-black" />
           </Tooltip.Content>
         </Tooltip.Portal>
       </Tooltip.Root>

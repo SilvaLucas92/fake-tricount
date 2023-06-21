@@ -9,7 +9,6 @@ const Expenses = ({
   dataDetails,
   setEditData,
   setOpenDeleteModal,
-  result,
 }: {
   setOpen: Dispatch<SetStateAction<boolean>>;
   dataDetails: CountItem[];
@@ -20,7 +19,6 @@ const Expenses = ({
       id: string;
     }>
   >;
-  result: number;
 }) => {
   if (dataDetails.length === 0)
     return (

@@ -66,11 +66,6 @@ const Detail = () => {
     {}
   );
 
-  const result = Object.keys(totalAmountByPerson).reduce((acc, count) => {
-    const amount = totalAmountByPerson[count];
-    return acc + amount;
-  }, 0);
-
   const onSubmit = useCallback(
     async (values: CountItem) => {
       try {
@@ -130,42 +125,9 @@ const Detail = () => {
     }
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  // const calculateDebt = (results: Record<string, number>) => {
-  //   const people = Object.keys(results);
-
-  //   let debt = "";
-
-  //   if (people.length === 0) {
-  //     debt = "No people found.";
-  //   } else if (people.length === 1) {
-  //     const person = people[0];
-  //     debt = `Can't calculate balance because only one person make expenses.`;
-  //   } else {
-  //     const person1 = people[0];
-  //     const person2 = people[1];
-
-  //     const debt1 = results[person1] - results[person2];
-
-  //     if (debt1 === 0) {
-  //       debt = "They are even. There is no debt between them.";
-  //     } else if (debt1 > 0) {
-  //       debt = `${person2} owes $${debt1} to ${person1}.`;
-  //     } else {
-  //       debt = `${person1} owes $${Math.abs(debt1)} to ${person2}.`;
-  //     }
-  //   }
-
-  //   setDebt(debt);
-  // };
-
   useEffect(() => {
     fetchCountsDetails();
   }, []);
-
-  // useEffect(() => {
-  //   calculateDebt(totalAmountByPerson);
-  // }, [allCounts]);
 
   const selectOptions = [
     {
@@ -227,18 +189,13 @@ const Detail = () => {
             dataDetails={allCounts}
             setEditData={setEditData}
             setOpenDeleteModal={setOpenDeleteModal}
-            result={result}
           />
         </Tabs.Content>
         <Tabs.Content
           className="grow p-5 bg-white rounded-b-md outline-none focus:shadow-[0_0_0_2px] focus:shadow-black"
           value="balance"
         >
-          <Balance
-            result={result}
-            data={allCounts}
-            totalByMember={totalAmountByPerson}
-          />
+          <Balance totalByMember={totalAmountByPerson} />
         </Tabs.Content>
       </Tabs.Root>
 
