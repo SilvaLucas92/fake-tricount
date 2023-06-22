@@ -40,22 +40,6 @@ const Detail = () => {
     `/api/details/getDetailsCounts?id=${id}`
   );
 
-  const totalAmountByPerson = data?.reduce(
-    (result: Record<string, number>, item: CountItem) => {
-      const paidBy = item?.paid_by;
-      const amount = item?.amount;
-
-      if (!(result as Record<string, number>)[paidBy]) {
-        (result as Record<string, number>)[paidBy] = 0;
-      }
-
-      result[paidBy] += amount;
-
-      return result;
-    },
-    {}
-  );
-
   const onSubmit = useCallback(
     async (values: CountItem) => {
       try {
@@ -188,7 +172,7 @@ const Detail = () => {
               className="grow p-5 bg-white rounded-b-md outline-none focus:shadow-[0_0_0_2px] focus:shadow-black"
               value="balance"
             >
-              <Balance totalByMember={totalAmountByPerson} data={data} />
+              <Balance data={data} />
             </Tabs.Content>
           </Tabs.Root>
         </>
