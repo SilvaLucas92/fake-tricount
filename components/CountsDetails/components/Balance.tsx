@@ -56,16 +56,8 @@ const Balance = ({ data }: { data: CountItem[] }) => {
 
   return (
     <div className="flex flex-col gap-2.5">
-      <div className="flex items-center justify-between">
-        <p className="text-lg font-semibold text-gray-900">
-          Total to pay by person:
-        </p>
-        <p className="text-base font-normal text-gray-800">
-          ${values?.totalToPayByPerson}
-        </p>
-      </div>
       <div>
-        <p className="text-lg  font-semibold text-gray-900">
+        <p className="text-lg font-semibold text-gray-900">
           Total paid by member
         </p>
         {values?.totalPaidByPerson &&
@@ -104,7 +96,21 @@ const Balance = ({ data }: { data: CountItem[] }) => {
         ))}
       </div>
 
-      <StackCol label="Total" value={values?.total} />
+      <div className="flex items-center justify-between">
+        <p className="text-lg font-semibold text-gray-900">
+          Total to pay by person:
+        </p>
+        <p className="text-base font-normal text-gray-800">
+          ${values?.totalToPayByPerson}
+        </p>
+      </div>
+
+      <div className="flex items-center justify-between">
+        <p className="text-lg font-semibold text-gray-900">Total</p>
+        <p className={clsx("text-md' ,'font-medium', 'text-gray-900")}>
+          ${values?.total}
+        </p>
+      </div>
     </div>
   );
 };
@@ -121,10 +127,10 @@ export const StackCol = ({
   color?: string;
 }) => (
   <div className="flex items-center justify-between">
-    <p className="text-lg font-normal text-gray-700">{label}</p>
+    <p className="text-md font-medium text-gray-600">{label}</p>
     <p
       className={clsx(
-        "text-base' ,'font-normal', 'text-gray-600",
+        "text-md' ,'font-medium', 'text-gray-900",
         color && color
       )}
     >
