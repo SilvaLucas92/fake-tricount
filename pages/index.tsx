@@ -12,33 +12,18 @@ import AddForm from "@/components/Navbar/AddForm";
 import { addNewCount, getAllCounts } from "@/services/counts";
 import { Alert, Count } from "@/types/types";
 import { Spinner } from "@/components/Spinner/Spinner";
+import useFetch from "@/hooks/useFetch";
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const session = useSession();
-  const [data, setData] = useState([]);
   const [alert, setAlert] = useState<Alert | null>(null);
   const [open, setOpen] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const email = session?.data?.user?.email;
 
-  const apiCall = useCallback(async () => {
-    const email = session?.data?.user?.email;
-    setIsLoading(true);
-    try {
-      const response = await getAllCounts(email);
-      setData(response);
-    } catch (err) {
-      setAlert({
-        type: "error",
-        msg: `something went wrong, Please try again later.`,
-      });
-    }
-    setIsLoading(false);
-  }, [session?.data?.user?.email]);
-
-  useEffect(() => {
-    apiCall();
-  }, []);
+  const { data, isLoading, error, refetch } = useFetch(
+    `/api/counts/getCounts?email=${email}`
+  );
 
   const onSubmit = async (values: Count) => {
     try {
@@ -51,7 +36,7 @@ export default function Home() {
       };
       const response = await addNewCount(payload as any);
       if (response) {
-        apiCall();
+        refetch();
       }
     } catch (error) {
       setAlert({
@@ -60,6 +45,12 @@ export default function Home() {
       });
     }
   };
+
+  useEffect(() => {
+    if (error) {
+      setAlert({ type: "error", msg: "Something went wrong" });
+    }
+  }, [error]);
 
   return (
     <Layout>

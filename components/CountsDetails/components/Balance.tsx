@@ -3,8 +3,10 @@ import { useEffect, useState } from "react";
 
 const Balance = ({
   totalByMember,
+  data
 }: {
   totalByMember: Record<string, number>;
+  data: any
 }) => {
   const [debt, setDebt] = useState<string | undefined>("");
 
@@ -75,3 +77,50 @@ const Balance = ({
 };
 
 export default Balance;
+
+
+
+// const splitCount = (values) => {
+//   const totalByPersonObj = values.reduce(
+//     (result: Record<string, number>, item: CountItem) => {
+//       const paidBy = item?.paid_by;
+//       const amount = item?.amount;
+
+//       if (!(result as Record<string, number>)[paidBy]) {
+//         (result as Record<string, number>)[paidBy] = 0;
+//       }
+
+//       result[paidBy] += amount;
+
+//       return result;
+//     },
+//     {}
+//   );
+  
+//     const total = Object.keys(totalByPersonObj).reduce((acc, count) => {
+//     const amount = totalByPersonObj[count];
+//     return acc + amount;
+//   }, 0);
+  
+//   const totalToPay = total / Object.keys(totalByPersonObj).length
+  
+//   let positiveTotals = []
+//   let negativeTotals = []
+//   for(let key in totalByPersonObj) {
+//     const value = totalByPersonObj[key] - totalToPay
+//     if(value < 0) {
+//       negativeTotals.push({[key]: value})
+//     }
+//     if(value >= 0) {
+//       positiveTotals.push({[key]: value})
+//     }
+//   }
+  
+//   return {
+//     total,
+//     totalPaid: totalByPersonObj,
+//     totalToPayByPerson: totalToPay,
+//     positives: positiveTotals, 
+//     negatives: negativeTotals
+//   }
+// }

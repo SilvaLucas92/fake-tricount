@@ -6,7 +6,6 @@ import { useSession } from "next-auth/react";
 import {
   addNewDetail,
   deleteDetail,
-  getAllDetails,
   updateDetail,
 } from "@/services/countsDetails";
 import { ShowNotification } from "@/components/ShowNotification";
@@ -18,6 +17,7 @@ import Expenses from "./components/Expenses";
 import Balance from "./components/Balance";
 import TooltipComponent from "../Tooltip";
 import { Spinner } from "../Spinner/Spinner";
+import useFetch from "@/hooks/useFetch";
 
 interface DeleteModalProps {
   open: boolean;
@@ -33,28 +33,14 @@ const Detail = () => {
     open: false,
     id: "",
   });
-  const [allCounts, setAllCounts] = useState([]);
   const [alert, setAlert] = useState<Alert | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const id = query.id;
 
-  console.log(allCounts)
+  const { data, isLoading, error, refetch } = useFetch(
+    `/api/details/getDetailsCounts?id=${id}`
+  );
 
-  const fetchCountsDetails = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const id = query.id as string | undefined | null;
-      const response = await getAllDetails(id);
-      setAllCounts(response);
-    } catch (err) {
-      setAlert({
-        type: "error",
-        msg: "Something went wrong. Please try again later.",
-      });
-    }
-    setIsLoading(false);
-  }, [query.id]);
-
-  const totalAmountByPerson = allCounts.reduce(
+  const totalAmountByPerson = data?.reduce(
     (result: Record<string, number>, item: CountItem) => {
       const paidBy = item?.paid_by;
       const amount = item?.amount;
@@ -81,7 +67,7 @@ const Detail = () => {
         };
         const response = await addNewDetail(payload as any);
         if (response) {
-          fetchCountsDetails();
+          refetch();
         }
       } catch (error) {
         setAlert({
@@ -90,14 +76,14 @@ const Detail = () => {
         });
       }
     },
-    [fetchCountsDetails, query.id]
+    [refetch, query.id]
   );
 
   const onDelete = async (id: string | undefined | null) => {
     try {
       const response = await deleteDetail(id);
       if (response) {
-        fetchCountsDetails();
+        refetch();
         setOpenDeleteModal({
           open: false,
           id: "",
@@ -118,7 +104,7 @@ const Detail = () => {
     try {
       const response = await updateDetail(id, payload);
       if (response) {
-        fetchCountsDetails();
+        refetch();
         setOpen(false);
       }
     } catch (error) {
@@ -130,8 +116,10 @@ const Detail = () => {
   };
 
   useEffect(() => {
-    fetchCountsDetails();
-  }, []);
+    if (error) {
+      setAlert({ type: "error", msg: "Something went wrong" });
+    }
+  }, [error]);
 
   const selectOptions = actualCount?.participants.map((item) => {
     return {
@@ -175,7 +163,6 @@ const Detail = () => {
               <Tabs.Trigger
                 className="bg-white px-5 h-[45px] flex-1 flex items-center justify-center text-[15px] leading-none text-mauve11 select-none first:rounded-tl-md last:rounded-tr-md hover:text-violet11 data-[state=active]:text-violet11 data-[state=active]:shadow-[inset_0_-1px_0_0,0_1px_0_0] data-[state=active]:shadow-current data-[state=active]:focus:relative data-[state=active]:focus:shadow-[0_0_0_2px] data-[state=active]:focus:shadow-black outline-none cursor-default"
                 value="expenses"
-                
               >
                 <p className="text-md font-medium text-gray-900">Expenses</p>
               </Tabs.Trigger>
@@ -192,7 +179,7 @@ const Detail = () => {
             >
               <Expenses
                 setOpen={setOpen}
-                dataDetails={allCounts}
+                dataDetails={data}
                 setEditData={setEditData}
                 setOpenDeleteModal={setOpenDeleteModal}
               />
@@ -201,7 +188,7 @@ const Detail = () => {
               className="grow p-5 bg-white rounded-b-md outline-none focus:shadow-[0_0_0_2px] focus:shadow-black"
               value="balance"
             >
-              <Balance totalByMember={totalAmountByPerson} />
+              <Balance totalByMember={totalAmountByPerson} data={data} />
             </Tabs.Content>
           </Tabs.Root>
         </>
@@ -209,9 +196,9 @@ const Detail = () => {
 
       {alert && (
         <ShowNotification
+          setAlert={setAlert}
           type={alert?.type}
           msg={alert?.msg}
-          setAlert={setAlert}
         />
       )}
       <AddForm
