@@ -57,7 +57,7 @@ const Balance = ({
 
     return {
       total,
-      totalPaidByPerson: totals,
+      // totalPaidByPerson: totals,
       totalToPayByPerson: totalToPay,
       positives: positiveTotals,
       negatives: negativeTotals,
@@ -70,7 +70,7 @@ const Balance = ({
 
   return (
     <div className="flex flex-col gap-2.5">
-      <div>
+      {/* <div>
         <p className="text-lg font-semibold text-gray-900">
           Total paid by member
         </p>
@@ -84,7 +84,7 @@ const Balance = ({
               />
             );
           })}
-      </div>
+      </div> */}
 
       <div>
         <p className="text-lg font-semibold text-gray-900">Negative balance</p>
