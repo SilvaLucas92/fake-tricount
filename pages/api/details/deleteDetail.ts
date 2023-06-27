@@ -14,7 +14,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const countsDetails = await CountsDetails.deleteOne({ _id: id });
     res.status(200).json(countsDetails);
   } catch (err) {
-    console.log(err);
     res.status(400).json({ err, msg: "Something went wrong" });
   }
 };

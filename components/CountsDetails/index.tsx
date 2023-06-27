@@ -172,7 +172,7 @@ const Detail = () => {
               className="grow p-5 bg-white rounded-b-md outline-none focus:shadow-[0_0_0_2px] focus:shadow-black"
               value="balance"
             >
-              <Balance data={data} />
+              <Balance data={data} actualCount={actualCount} />
             </Tabs.Content>
           </Tabs.Root>
         </>

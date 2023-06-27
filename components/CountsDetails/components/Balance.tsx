@@ -2,10 +2,17 @@ import { CountItem } from "@/types/types";
 import clsx from "clsx";
 import { useCallback, useEffect, useState } from "react";
 
-const Balance = ({ data }: { data: CountItem[] }) => {
+const Balance = ({
+  data,
+  actualCount,
+}: {
+  data: CountItem[];
+  actualCount: any;
+}) => {
   const [values, setValues] = useState<any>();
 
   const splitCount = useCallback((values: CountItem[]) => {
+    const part_qty = actualCount.participants.length;
     const totalByPersonObj = values.reduce(
       (result: Record<string, number>, item: CountItem) => {
         const paidBy = item?.paid_by;
@@ -22,17 +29,24 @@ const Balance = ({ data }: { data: CountItem[] }) => {
       {}
     );
 
-    const total = Object.keys(totalByPersonObj).reduce((acc, count) => {
-      const amount = totalByPersonObj[count];
+    const totals = {};
+
+    actualCount.participants.forEach((participant: string) => {
+      const total = totalByPersonObj[participant] || 0;
+      (totals as any)[participant] = total;
+    });
+
+    const total = Object.keys(totals).reduce((acc, count) => {
+      const amount = (totals as Record<string, number>)[count];
       return acc + amount;
     }, 0);
 
-    const totalToPay = total / Object.keys(totalByPersonObj).length;
+    const totalToPay = total / part_qty;
 
     let positiveTotals = {};
     let negativeTotals = {};
-    for (let key in totalByPersonObj) {
-      const value = totalByPersonObj[key] - totalToPay;
+    for (let key in totals) {
+      const value = (totals as Record<string, number>)[key] - totalToPay;
       if (value < 0) {
         (negativeTotals as any)[key] = value;
       }
@@ -43,7 +57,7 @@ const Balance = ({ data }: { data: CountItem[] }) => {
 
     return {
       total,
-      totalPaidByPerson: totalByPersonObj,
+      totalPaidByPerson: totals,
       totalToPayByPerson: totalToPay,
       positives: positiveTotals,
       negatives: negativeTotals,

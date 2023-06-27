@@ -27,11 +27,13 @@ export default function Home() {
 
   const onSubmit = async (values: Count) => {
     try {
+      const participant = Object.values(values?.participants);
       const payload = {
         counts: {
-          ...values,
+          title: values.title,
+          description: values.description,
           created_by: session.data?.user?.email,
-          participants: [values.participants, session.data?.user?.name],
+          participants: [...participant, session.data?.user?.name],
         },
       };
       const response = await addNewCount(payload as any);

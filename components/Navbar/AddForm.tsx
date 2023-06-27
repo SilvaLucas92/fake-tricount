@@ -5,8 +5,9 @@ import { Input } from "../Input";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import Select from "../Select";
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { CountItem, selectOptions } from "@/types/types";
+import { useSession, getSession } from "next-auth/react";
 
 interface formProps {
   open: boolean;
@@ -27,9 +28,11 @@ const AddForm = ({
   data,
   setData,
 }: formProps) => {
+  const [values, setValues] = useState<Record<string, string> | null>(null);
+
   const initialValues =
     formType === "count"
-      ? { title: "", description: "", participants: "" }
+      ? { title: "", description: "", participants: {}, participants_qty: 0 }
       : {
           title: data?.title || "",
           amount: data?.amount || "",
@@ -42,7 +45,10 @@ const AddForm = ({
       ? Yup.object({
           title: Yup.string().required("Title is required"),
           description: Yup.string().required("Description is required"),
-          participants: Yup.string().required("Participant is required"),
+          participants_qty: Yup.number().required(
+            "Number Of participants is required"
+          ),
+          // ...validation,
         })
       : Yup.object({
           title: Yup.string().required("Title is required"),
@@ -70,11 +76,36 @@ const AddForm = ({
         setData(null);
       } else {
         onSubmit(values);
+        setValues(null);
       }
       onOpenChange(false);
       formik.resetForm();
     },
   });
+
+  const setParticipants = (quantity: number) => {
+    const newArray = new Array(quantity).fill("");
+
+    const participants = {};
+    const validations = {};
+    const arrayParticipants: string[] = [];
+
+    for (let i = 0; i < newArray.length; i++) {
+      const name = `member${i}`;
+      const key = name;
+      arrayParticipants.push(name);
+      (participants as any)[key] = "";
+      (validations as any)[key] = Yup.string().required(`${name} is required`);
+    }
+    setValues(participants);
+    formik.setValues((prev: any) => ({ ...prev, participants }));
+  };
+
+  useEffect(() => {
+    if (formik.values.participants_qty && formik.values.participants_qty > 0) {
+      setParticipants(formik?.values?.participants_qty);
+    }
+  }, [formik.values.participants_qty]);
 
   return (
     <Modal
@@ -83,6 +114,7 @@ const AddForm = ({
         data && setData && setData(null);
         onOpenChange(false);
         formik.resetForm();
+        setValues(null);
       }}
     >
       <Modal.Portal>
@@ -120,17 +152,45 @@ const AddForm = ({
                     }
                   />
                   <Input
-                    type="text"
-                    label="Participant"
-                    name="participants"
-                    value={formik.values.participants}
+                    type="number"
+                    label="Amount of members"
+                    name="participants_qty"
+                    value={formik.values.participants_qty}
                     onChange={formik.handleChange}
                     error={
-                      formik.touched.participants && formik.errors.participants
-                        ? formik.errors.participants
+                      formik.touched.participants_qty &&
+                      formik.errors.participants_qty
+                        ? formik.errors.participants_qty
                         : ""
                     }
                   />
+                  {values &&
+                    Object.keys(values).map((item) => {
+                      return (
+                        <Input
+                          key={item}
+                          type="text"
+                          label={item}
+                          name={item}
+                          value={(formik?.values as any)?.[item]}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            formik.setValues((prevValues: any) => ({
+                              ...prevValues,
+                              participants: {
+                                ...prevValues.participants,
+                                [item]: e.target.value,
+                              },
+                            }))
+                          }
+                          error={
+                            (formik?.touched as any)?.[item] &&
+                            (formik?.errors as any)?.[item]
+                              ? (formik?.errors as any)?.[item]
+                              : ""
+                          }
+                        />
+                      );
+                    })}
                 </>
               )}
               {formType === "detail" && (
