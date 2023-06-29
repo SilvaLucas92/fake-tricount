@@ -1,8 +1,19 @@
 import { compare } from "bcryptjs";
-import NextAuth, { NextAuthOptions } from "next-auth";
+import NextAuth, { CookiesOptions, NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { connectMongoDB } from "@/libs/mongodb";
 import User from "@/models/Users";
+
+export const cookies: Partial<CookiesOptions> = {
+  sessionToken: {
+    name: "sessionToken",
+    options: {
+      sameSite: "lax",
+      path: "/",
+      expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+    },
+  },
+};
 
 const options: NextAuthOptions = {
   providers: [
@@ -54,8 +65,8 @@ const options: NextAuthOptions = {
 
       return session;
     },
-
   },
+  cookies,
 };
 
 export default NextAuth(options);

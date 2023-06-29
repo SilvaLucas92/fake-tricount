@@ -182,7 +182,7 @@ const AddModal: React.FC<formProps> = ({
                       }
                       name="paid_by"
                       value={String(formik.values.participants_qty)}
-                      placeholder="Amount of members"
+                      placeholder="Aditional members"
                     />
                     {values &&
                       Object.keys(values).map((item) => {
