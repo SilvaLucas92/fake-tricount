@@ -1,3 +1,5 @@
+import { FocusEvent } from "react";
+
 export interface CountItem {
   _id: string;
   title: string;

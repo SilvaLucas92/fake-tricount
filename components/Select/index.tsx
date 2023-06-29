@@ -33,7 +33,7 @@ const Select = ({
         "border",
         "py-2.5",
         "rounded-md",
-        "px-1",
+        "px-2",
         "placeholder-gray-600",
         "placeholder-opacity-50",
         "placeholder:transition-all",
@@ -45,13 +45,13 @@ const Select = ({
       aria-label="Select"
     >
       <RadixSelect.Value placeholder={placeholder} />
-      <RadixSelect.Icon className="text-violet11">
+      <RadixSelect.Icon>
         <IconChevronDown height={18} width={18} />
       </RadixSelect.Icon>
     </RadixSelect.Trigger>
     <RadixSelect.Portal className="z-[9999999999]">
       <RadixSelect.Content
-        className="overflow-hidden bg-gray-100 rounded-md shadow-md w-[var(--radix-select-trigger-width)] max-h-[var(--radix-select-content-available-height)] my-1"
+        className="overflow-hidden  bg-gray-50 rounded-md shadow-md w-[var(--radix-select-trigger-width)] max-h-[var(--radix-select-content-available-height)] my-1"
         position="popper"
       >
         <RadixSelect.ScrollUpButton className="flex items-center justify-center h-[25px] bg-white cursor-default">
@@ -77,7 +77,7 @@ const SelectItem = forwardRef<any, any>(
     return (
       <RadixSelect.Item
         className={clsx(
-          "leading-none rounded-smPlus flex items-center p-2.5 pl-[30px]  hover:bg-gray-100 relative select-none data-[highlighted]:outline-none data-[highlighted]:bg-gray-100 data-[highlighted]:text-black my-2.5",
+          "leading-none rounded-smPlus flex items-center p-2.5 pl-[30px]  hover:bg-gray-300 relative select-none data-[highlighted]:outline-none data-[highlighted]:bg-gray-100 data-[highlighted]:text-black my-2.5",
           className
         )}
         {...props}

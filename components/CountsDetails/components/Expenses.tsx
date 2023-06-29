@@ -22,9 +22,9 @@ const Expenses = ({
 }) => {
   if (dataDetails.length === 0)
     return (
-      <div className="flex items-center justify-between mb-5">
-        <h5 className="text-lg font-semibold text-gray-900 ">
-          No Expenses, please add one!
+      <div className="flex items-center justify-between">
+        <h5 className="text-lg font-normal text-gray-900 ">
+          No Expenses...
         </h5>
         <AddButton onClick={() => setOpen(true)} />
       </div>

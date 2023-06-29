@@ -137,7 +137,7 @@ const Detail = () => {
             </div>
           </div>
           <Tabs.Root
-            className="flex flex-col w-full shadow-md my-5"
+            className="flex flex-col w-full shadow-md my-5 rounded"
             defaultValue="expenses"
           >
             <Tabs.List

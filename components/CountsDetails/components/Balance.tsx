@@ -13,6 +13,7 @@ const Balance = ({
 
   const splitCount = useCallback((values: CountItem[]) => {
     const part_qty = actualCount.participants.length;
+
     const totalByPersonObj = values.reduce(
       (result: Record<string, number>, item: CountItem) => {
         const paidBy = item?.paid_by;
@@ -57,11 +58,11 @@ const Balance = ({
 
     return {
       total,
-      // totalPaidByPerson: totals,
       totalToPayByPerson: totalToPay,
       positives: positiveTotals,
       negatives: negativeTotals,
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -70,61 +71,59 @@ const Balance = ({
 
   return (
     <div className="flex flex-col gap-2.5">
-      {/* <div>
-        <p className="text-lg font-semibold text-gray-900">
-          Total paid by member
-        </p>
-        {values?.totalPaidByPerson &&
-          Object?.keys(values?.totalPaidByPerson).map((item) => {
-            return (
-              <StackCol
-                label={item}
-                value={values?.totalPaidByPerson[item]}
-                key={item}
-              />
-            );
-          })}
-      </div> */}
+      {data.length === 0 ? (
+        <p className="text-lg font-normal text-gray-900 ">No Balance..</p>
+      ) : (
+        <>
+          <div>
+            <p className="text-lg font-semibold text-gray-900">
+              Negative balance
+            </p>
+            {Object.entries(values?.negatives || {}).map(
+              ([person, balance]) => (
+                <StackCol
+                  label={person}
+                  value={balance as number}
+                  color="text-red-400"
+                  key={person}
+                />
+              )
+            )}
+          </div>
 
-      <div>
-        <p className="text-lg font-semibold text-gray-900">Negative balance</p>
-        {Object.entries(values?.negatives || {}).map(([person, balance]) => (
-          <StackCol
-            label={person}
-            value={balance as number}
-            color="text-red-400"
-            key={person}
-          />
-        ))}
-      </div>
+          <div>
+            <p className="text-lg font-semibold text-gray-900">
+              Positive balance
+            </p>
+            {Object.entries(values?.positives || {}).map(
+              ([person, balance]) => (
+                <StackCol
+                  label={person}
+                  value={balance as number}
+                  color="text-green-400"
+                  key={person}
+                />
+              )
+            )}
+          </div>
 
-      <div>
-        <p className="text-lg font-semibold text-gray-900">Positive balance</p>
-        {Object.entries(values?.positives || {}).map(([person, balance]) => (
-          <StackCol
-            label={person}
-            value={balance as number}
-            color="text-green-400"
-            key={person}
-          />
-        ))}
-      </div>
+          <div className="flex items-center justify-between">
+            <p className="text-lg font-semibold text-gray-900">
+              Total to pay by person:
+            </p>
+            <p className="text-base font-normal text-gray-800">
+              ${values?.totalToPayByPerson}
+            </p>
+          </div>
 
-      <div className="flex items-center justify-between">
-        <p className="text-lg font-semibold text-gray-900">
-          Total to pay by person:
-        </p>
-        <p className="text-base font-normal text-gray-800">
-          ${values?.totalToPayByPerson}
-        </p>
-      </div>
-
-      <div className="flex items-center justify-between">
-        <p className="text-lg font-semibold text-gray-900">Total</p>
-        <p className={clsx("text-md' ,'font-medium', 'text-gray-900")}>
-          ${values?.total}
-        </p>
-      </div>
+          <div className="flex items-center justify-between">
+            <p className="text-lg font-semibold text-gray-900">Total</p>
+            <p className={clsx("text-md' ,'font-medium', 'text-gray-900")}>
+              ${values?.total}
+            </p>
+          </div>
+        </>
+      )}
     </div>
   );
 };
