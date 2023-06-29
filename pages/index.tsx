@@ -3,13 +3,12 @@ import Hero from "@/components/Hero/Hero";
 import { Inter } from "next/font/google";
 import clsx from "clsx";
 import { Layout } from "@/components/Layout/Layout";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSession, getSession } from "next-auth/react";
 import { ShowNotification } from "@/components/ShowNotification";
 import { GetServerSidePropsContext } from "next";
 import { AddButton } from "@/components/AddButton";
-import AddForm from "@/components/Navbar/AddForm";
-import { addNewCount, getAllCounts } from "@/services/counts";
+import { addNewCount } from "@/services/counts";
 import { Alert, Count } from "@/types/types";
 import { Spinner } from "@/components/Spinner/Spinner";
 import useFetch from "@/hooks/useFetch";
@@ -21,7 +20,6 @@ export default function Home() {
   const [alert, setAlert] = useState<Alert | null>(null);
   const [open, setOpen] = useState<boolean>(false);
   const email = session?.data?.user?.email;
-
   const { data, isLoading, error, refetch } = useFetch(
     `/api/counts/getCounts?email=${email}`
   );

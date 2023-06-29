@@ -54,6 +54,7 @@ const options: NextAuthOptions = {
 
       return session;
     },
+
   },
 };
 

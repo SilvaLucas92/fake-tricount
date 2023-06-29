@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Layout } from "@/components/Layout/Layout";
-import AddForm from "@/components/Navbar/AddForm";
-import { useSession } from "next-auth/react";
 import {
   addNewDetail,
   deleteDetail,

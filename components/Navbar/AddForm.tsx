@@ -127,12 +127,6 @@ const AddForm = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formik.values.participants_qty]);
 
-  console.log(validation);
-  console.log(formik.values);
-
-  console.log(validationSchema);
-  console.log(formik.errors);
-
   return (
     <Modal
       open={open}

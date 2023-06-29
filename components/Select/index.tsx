@@ -21,7 +21,7 @@ const Select = ({
   name,
 }: SelectProps) => (
   <RadixSelect.Root value={value} onValueChange={onChange} name={name}>
-    <label className={clsx("mb-2", "block", "text-sm", "font-medium")}>
+    <label className={clsx("mb-1", "block", "text-sm", "font-medium")}>
       {label}
     </label>
     <RadixSelect.Trigger

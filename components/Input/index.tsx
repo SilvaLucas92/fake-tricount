@@ -15,7 +15,7 @@ export const Input = ({
     <div>
       <label
         htmlFor={name}
-        className={"block mb-2 text-sm font-medium text-gray-900"}
+        className={"block mb-1 text-sm font-medium text-gray-900"}
       >
         {label}
       </label>
@@ -34,7 +34,7 @@ export const Input = ({
           "block",
           "w-full",
           "p-2.5",
-          error  &&
+          error &&
             "border-red-600 ring-1 ring-inset ring-red-600 focus:ring-2 focus:ring-inset focus:ring-red-600",
           disabled && "opacity-50 cursor-default"
         )}
