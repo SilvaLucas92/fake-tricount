@@ -18,6 +18,7 @@ import Balance from "./components/Balance";
 import TooltipComponent from "../Tooltip";
 import { Spinner } from "../Spinner/Spinner";
 import useFetch from "@/hooks/useFetch";
+import AddModal from "../AddModal";
 
 interface DeleteModalProps {
   open: boolean;
@@ -185,7 +186,7 @@ const Detail = () => {
           msg={alert?.msg}
         />
       )}
-      <AddForm
+      <AddModal
         open={open}
         onOpenChange={setOpen}
         onSubmit={editData ? onUpdate : onSubmit}

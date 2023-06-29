@@ -13,6 +13,7 @@ import { addNewCount, getAllCounts } from "@/services/counts";
 import { Alert, Count } from "@/types/types";
 import { Spinner } from "@/components/Spinner/Spinner";
 import useFetch from "@/hooks/useFetch";
+import AddModal from "@/components/AddModal";
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
@@ -95,7 +96,7 @@ export default function Home() {
             ))}
           </div>
         )}
-        <AddForm
+        <AddModal
           open={open}
           onOpenChange={setOpen}
           onSubmit={onSubmit}
