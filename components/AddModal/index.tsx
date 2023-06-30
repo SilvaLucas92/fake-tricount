@@ -175,7 +175,7 @@ const AddModal: React.FC<formProps> = ({
                       }
                     />
                     <Select
-                      label="Amount of members"
+                      label="Aditional members"
                       data={options ?? []}
                       onChange={(value) =>
                         formik.setFieldValue("participants_qty", Number(value))
